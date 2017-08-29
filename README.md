@@ -53,7 +53,7 @@ Speaker-specific measures are (for a speaker S):
 
 ### From JAR ###
 
-A ready-to-use JAR is available on github. Check the latest release!
+A ready-to-use JAR is available on github. Check the [latest release](https://github.com/GuillaumeDD/dialign/releases)!
 
 ### From source code ###
 
