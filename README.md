@@ -7,9 +7,9 @@ verbal alignment in  dyadic dialogue based on  sequential pattern mining
 at the level of surface of text utterances.
 
 A good place to start can be found in the following paper:
-- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf)\]
+- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
 
-dialign  is based  on the  observation  that the  behaviour of  dialogue
+dialign  is based  on the  observation that  the behaviours  of dialogue
 participants tend to converge and  automatically align at several levels
 (such as the lexical, syntactic  and semantic ones).  One consequence of
 successful alignment at several  levels between dialogue participants is
@@ -24,7 +24,7 @@ participants. dialign  provides global and speaker-specific  measures of
 verbal alignment  based on repetition  at the lexical level  in dialogue
 transcripts.
 
-!![Idea of the framework: automatic building of the shared expression lexicon to derive verbal alignment measures](../blob/master/doc/img/framework.png?raw=true)
+!![Idea of the framework: automatic building of the shared expression lexicon to derive verbal alignment measures](../master/doc/img/framework.png?raw=true)
 
 Essentially,  dialign works  by  automatically building  the lexicon  of
 shared  expression from  the transcript  of a  dialogue. The  expression
@@ -33,7 +33,9 @@ these  expressions  (e.g.,  who  first  produced  this  expression,  its
 frequency).  Then,  straightforward measures  are derived  by leveraging
 both the dialogue transcript and the dialogue lexicon.
 
-Global measures are:
+The  provided  verbal alignment  measures  are  computed for  an  entire
+dialogue and  are currently offline (i.e.  for corpus study and  not yet
+for an online usage in a dialogue system).  Global measures are:
 - **Expression Lexicon Size  (ELS)**: the number of items  in the expression
   lexicon
 - **Expression Variety  (EV)**: the  ELS normalised by  the total  number of
@@ -190,7 +192,7 @@ java -jar dialign.jar -h
 
 If you use this software for  research purposes, please make reference to
 it by citing the following paper:
-- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf)\]
+- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
 
 The authors  of this work would  be happy to  hear about you if  you are
 using this code! Please, do not hesitate to contact us:
