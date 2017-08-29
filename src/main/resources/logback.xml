@@ -1,0 +1,25 @@
+<configuration>
+
+  <!-- LOG_FILE_NAME: Java system properties set on the command line  -->
+  <!-- LOG_HOME: Set at this line below -->
+  <property name="LOG_HOME" value="/tmp" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%date %-5level [%thread] - [%logger]- %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>${LOG_HOME}/dialign.log</file>
+    <encoder>
+      <pattern>%date %-5level [%thread] - [%logger] - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+
+  <root level="DEBUG">
+    <!-- <appender-ref ref="STDOUT" /> -->
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>

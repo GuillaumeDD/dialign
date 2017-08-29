@@ -1,2 +1,10 @@
+*~
 *.class
 *.log
+.classpath
+.idea/
+.project
+.settings/
+dialign.iml
+project/
+target/
