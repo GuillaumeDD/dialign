@@ -1,6 +1,6 @@
 # dialign #
 
-Latest version: 0.1 (alpha)
+Latest version: 0.1.1 (alpha)
 
 dialign is  a software that  provides automatic and generic  measures of
 verbal alignment in  dyadic dialogue based on  sequential pattern mining
