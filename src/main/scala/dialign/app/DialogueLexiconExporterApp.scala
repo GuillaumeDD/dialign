@@ -65,7 +65,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
                     outputSynthesisFilename: String = "dial-synthesis.csv",
                     withNormalisation: Boolean = false,
                     filenamePrefix: String = "",
-                    filenameSuffix: String = "-cleaned",
+                    filenameSuffix: String = "",
                     filenameExtension: String = "txt"
                    )
 
