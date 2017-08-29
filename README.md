@@ -24,7 +24,7 @@ participants. dialign  provides global and speaker-specific  measures of
 verbal alignment  based on repetition  at the lexical level  in dialogue
 transcripts.
 
-!![Idea of the framework: automatic building of the shared expression lexicon to derive verbal alignment measures](../master/doc/img/framework.png?raw=true)
+![Idea of the framework: automatic building of the shared expression lexicon to derive verbal alignment measures](../master/doc/img/framework.png?raw=true)
 
 Essentially,  dialign works  by  automatically building  the lexicon  of
 shared  expression from  the transcript  of a  dialogue. The  expression
