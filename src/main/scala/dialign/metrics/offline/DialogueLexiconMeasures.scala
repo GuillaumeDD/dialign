@@ -150,9 +150,27 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
 
   lazy val expressionVariety: Double = numExpressions.toDouble / numTokens.toDouble
 
+  /**
+    * Expression Repetition (ER) measure for other-repetition
+    */
   lazy val expressionRepetition: Double = {
     val lastIndex = numUtterances - 1
     turnID2expressionRepetition(lastIndex)
+  }
+
+  /**
+    * Expression Repetition (ER) measure for self-repetition
+    */
+  lazy val expressionSelfRepetition: Double = {
+    var nbTokens = 0
+    var nbTokensInRSTP = 0
+
+    for (turn <- lexicon.turns) {
+      nbTokens += turn.tokenSize
+      nbTokensInRSTP += turn.rawExprsTokenSize // beware: rawExprsTokenSize is called and not exprsTokenSize
+    }
+
+    (nbTokensInRSTP.toDouble / nbTokens.toDouble)
   }
 
   def initiatedExpressionsBy(s: Speaker): Double = speaker2stats(s).nbRSTPInitialised.toDouble / numExpressions.toDouble
@@ -181,7 +199,10 @@ object DialogueLexiconMeasures {
       "Expression Lexicon Size (ELS)", "Expression Variety (EV)", "Expression Repetition (ER)",
       "S1/Initiated Expression (IE_S1)", "S1/Expression Repetition (ER_S1)", "S1/tokens (%)",
       "S2/Initiated Expression (IE_S2)", "S2/Expression Repetition (ER_S2)", "S2/tokens (%)",
-      "Voc. Overlap", "Voc. Overlap S1", "Voc. Overlap S2"
+      "Voc. Overlap", "Voc. Overlap S1", "Voc. Overlap S2",
+      // Self-repetition measures
+      "SR/S1/ELS", "SR/S1/EV", "SR/S1/ER",
+      "SR/S2/ELS", "SR/S2/EV", "SR/S2/ER"
     )
     CSVUtils.mkCSV(heading)
   }
@@ -200,6 +221,21 @@ object DialogueLexiconMeasures {
       initiatedExpressionsBy(B), expressionRepetitionBy(B), producedTokensBy(B),
       // Shared vocabulary measures
       sharedVocabulary, sharedVocabularyBy(A), sharedVocabularyBy(B)
+    )
+
+    CSVUtils.mkCSV(data)
+  }
+
+  /**
+    * Builds a CSV string representation for ELS, EV and ER measures only
+    *
+    */
+  def toCSVSelfRepetition(measures: DialogueLexiconMeasures): String = {
+    import measures._
+
+    val data = List(
+      // Expression model measures
+      numExpressions, expressionVariety, expressionSelfRepetition
     )
 
     CSVUtils.mkCSV(data)

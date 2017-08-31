@@ -41,13 +41,13 @@ package dialign.app
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import dialign.CSVUtils
+import dialign.{CSVUtils, DialogueLexiconBuilder, IO, Speaker}
 import dialign.metrics.offline.DialogueLexiconMeasures
-import dialign.metrics.offline.DialogueLexiconMeasures.toCSV
-import dialign.DialogueLexiconBuilder
+import dialign.metrics.offline.DialogueLexiconMeasures.{toCSV, toCSVSelfRepetition}
 import dialign.IO.{DialogueReader, getFilenames}
-import dialign.IO
-import dialign.DialogueLexicon.{mkHierarchicalInventory, mkStringTurns}
+import dialign.DialogueLexicon.{mkHierarchicalInventory, mkSelfRepetitionHierarchicalInventory, mkStringTurns}
+import dialign.DialogueLexiconBuilder.ExpressionType
+import dialign.nlp.Tokenizer.TokenizedUtterance
 import dialign.nlp.{Normalizer, Tokenizer}
 
 /**
@@ -168,15 +168,51 @@ object DialogueLexiconExporterApp extends LazyLogging {
     val utterances = dialogue.utterances
     val turnID2Speaker = dialogue.getSpeaker _
 
+    /*
+     * Mapping between a speaker and the sequence of utterances that forms the dialogue but with the utterance
+     * from the other speaker replaced by an empty utterances
+     */
+    val speaker2utterances = (
+      for (speaker <- Speaker.values)
+        yield ({
+          // Keeping the sequence of utterances intact but replacing utterances from the
+          // other speaker by empty utterances
+          val utterancesFromSpeaker =
+          for ((utt, index) <- utterances.zipWithIndex)
+            yield (if (turnID2Speaker(index) == speaker) {
+              utt
+            } else {
+              TokenizedUtterance.empty
+            })
+          (speaker -> utterancesFromSpeaker)
+        })
+      ).toMap
+
     // Building the lexicon
     logger.debug(s"Building dialogue lexicon for dialogue: $dialogueID")
+    // Other-repetition lexicon
     val lexicon = DialogueLexiconBuilder(utterances, turnID2Speaker)
+    // Self-repetition lexicon for speaker A
+    val lexiconForA = DialogueLexiconBuilder(
+      speaker2utterances(Speaker.A),
+      turnID2Speaker,
+      ExpressionType.OWN_REPETITION_ONLY)
+    // Self-repetition lexicon for speaker B
+    val lexiconForB = DialogueLexiconBuilder(
+      speaker2utterances(Speaker.B),
+      turnID2Speaker,
+      ExpressionType.OWN_REPETITION_ONLY)
 
     def process(): String = {
       outputLexicon()
+      outputSelfRepetitionLexicon()
       outputDialogue()
 
-      toCSV(DialogueLexiconMeasures(lexicon))
+      val otherRepetitionMeasures = toCSV(DialogueLexiconMeasures(lexicon))
+      val selfRepetitionA = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForA))
+      val selfRepetitionB = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForB))
+
+      CSVUtils.join(otherRepetitionMeasures, CSVUtils.join(selfRepetitionA, selfRepetitionB))
     }
 
 
@@ -204,6 +240,26 @@ object DialogueLexiconExporterApp extends LazyLogging {
       IO.withFile(filename_lexicon) {
         writer =>
           writer.println(mkHierarchicalInventory(lexicon))
+      }
+    }
+
+    def outputSelfRepetitionLexicon(): Unit = {
+      // Self-repetition lexicon for A
+      val filename_lexicon_A = s"$outputDir/$dialogueID-lexicon-self-rep-A.csv"
+      logger.debug(s"Outputing self-repetition dialogue lexicon for speaker A in $filename_lexicon_A (for dialogue: $dialogueID)")
+
+      IO.withFile(filename_lexicon_A) {
+        writer =>
+          writer.println(mkSelfRepetitionHierarchicalInventory(lexiconForA))
+      }
+
+      // Self-repetition lexicon for B
+      val filename_lexicon_B = s"$outputDir/$dialogueID-lexicon-self-rep-B.csv"
+      logger.debug(s"Outputing self-repetition dialogue lexicon for speaker B in $filename_lexicon_B (for dialogue: $dialogueID)")
+
+      IO.withFile(filename_lexicon_B) {
+        writer =>
+          writer.println(mkSelfRepetitionHierarchicalInventory(lexiconForB))
       }
     }
   }

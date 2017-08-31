@@ -266,12 +266,36 @@ class DialogueLexicon(
 
     def tokenSize: Int = content.size
 
+    /**
+      * Computes the ratio of tokens belonging to an *established* expression in this turn
+      * @see rawExprsTokenSize method is a similar method that does not take into account expression establishment
+      *
+      */
     lazy val exprsTokenSize: Int = {
       // Recovering the ranges of token positions involved in an expression
       val flatRanges =
         for {
           expr <- this.freeExpressions
           if this.id >= expr.establishementTurnID() // only count expressions that are established
+          range <- expr.ranges(this.id)
+        } yield (range)
+
+      // Recovering and counting token involved in an expression
+      (for {
+        i <- 0 until tokenSize
+        if flatRanges.exists(range => range.contains(i))
+      } yield (i)).size
+    }
+
+    /**
+      * Computes the ratio of tokens belonging to an expression (without taking into account establishment) in this turn
+      * @see exprsTokenSize method is a similar method that takes into account expression establishment
+      */
+    lazy val rawExprsTokenSize: Int = {
+      // Recovering the ranges of token positions involved in an expression
+      val flatRanges =
+        for {
+          expr <- this.freeExpressions
           range <- expr.ranges(this.id)
         } yield (range)
 
@@ -318,6 +342,10 @@ class DialogueLexicon(
 }
 
 object DialogueLexicon {
+  /**
+    * Builds a hierarchical inventory string representation for other-repetitions
+    *
+    */
   def mkHierarchicalInventory(lexicon: DialogueLexicon): String = {
     import lexicon._
 
@@ -357,6 +385,51 @@ object DialogueLexicon {
       buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.content.size, expr.content.mkString(" "),
         establishementTurn, expr.span(), expr.priming(), expr.firstSpeaker(),
         expr.turns().mkString(", "))))
+      buffer.append("\n")
+    }
+
+    buffer.result()
+  }
+
+  /**
+    * Builds a hierarchical inventory string representation for self-repetitions
+    *
+    */
+  def mkSelfRepetitionHierarchicalInventory(lexicon: DialogueLexicon): String = {
+    import lexicon._
+
+    val buffer = new StringBuilder()
+
+    // TODO the following code might be subject to optimization in the future
+    val sortedExpressions = lexicon.expressions.toList.sortWith({
+      case (expr1, expr2) =>
+        if (expr1.content.size > expr2.content.size) {
+          // sorting by size DESC
+          true
+        } else if (expr1.content.size < expr2.content.size) {
+          false
+        } else {
+          // equal size
+          if (expr1.freq > expr2.freq) {
+            // sorting by freq DESC
+            true
+          } else if (expr1.freq < expr2.freq) {
+            false
+          } else {
+            // equal freq
+            val expr1seq = expr1.content.mkString(" ")
+            val expr2seq = expr2.content.mkString(" ")
+            expr1seq <= expr2seq // sorting by surface text form ASC
+          }
+        }
+    })
+
+    buffer.append(CSVUtils.mkCSV(List("Freq.", "Size", "Surface Form",
+      "Spanning", "First Speaker", "Turns")))
+    buffer.append("\n")
+    for (expr <- sortedExpressions) {
+      buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.content.size, expr.content.mkString(" "),
+        expr.span(), expr.firstSpeaker(), expr.turns().mkString(", "))))
       buffer.append("\n")
     }
 
