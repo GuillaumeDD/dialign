@@ -41,9 +41,10 @@ package dialign.app
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
+import dialign.DialogueLexiconBuilder.ExpressionType
 import dialign.{CSVUtils, DialogueLexiconBuilder, IO, Speaker}
 import dialign.Speaker.Speaker
-import dialign.metrics.online.{ActivationBasedMeasures, LexiconBasedMeasures}
+import dialign.metrics.online.{ActivationBasedMeasures, LexiconBasedMeasures, SelfRepetitionMeasures}
 import dialign.nlp.Tokenizer.TokenizedUtterance
 
 import scala.collection.mutable.ArrayBuffer
@@ -99,21 +100,41 @@ object OnlineMetricsComputerApp extends LazyLogging {
         val dialogues = readFile(config.inputFile, preprocessTurn)
 
         // Exporting dialogues with measures
-        val csvHeader = CSVUtils.mkCSV(List("Input line", "Index", "Loc.", "Tokenized utt.",
+        val csvHeader = CSVUtils.mkCSV(List("Dial. Name", "Input line", "Index", "Num. Tokens", "Loc.", "Tokenized utt.",
+          "SER",
           "ER",
-          "Activation", "Dialogue structures"))
+          "Activation", "Inter-Repetition Dialogue structures", "Self-Repetition Dialogue structures"))
 
         def printDialogue(dialogue: PreprocessedDialogue): Unit = {
           val currentUtterances = ArrayBuffer.empty[TokenizedUtterance]
+          val currentUtterancesFor = Map[Speaker, ArrayBuffer[TokenizedUtterance]](
+            Speaker.A -> ArrayBuffer.empty[TokenizedUtterance],
+            Speaker.B -> ArrayBuffer.empty[TokenizedUtterance])
 
           val utterances = dialogue.lines
           val turn2speaker = dialogue.turn2speaker _
+
+          var currentNumTokens = 0
 
           for ((PreprocessedLine(line, utterance), index) <- utterances.zipWithIndex) {
             // Updating dialogue
             currentUtterances.append(utterance)
 
+            val lastSpeaker = turn2speaker(index)
+            for (speaker <- Speaker.values) {
+              if (lastSpeaker == speaker) {
+                currentUtterancesFor(speaker).append(utterance)
+              } else {
+                currentUtterancesFor(speaker).append(TokenizedUtterance.empty)
+              }
+            }
+
             // Computing metrics
+            val selfRepetitionLexicon = DialogueLexiconBuilder(
+              currentUtterancesFor(lastSpeaker),
+              turn2speaker,
+              ExpressionType.OWN_REPETITION_ONLY)
+
             val lexicon = DialogueLexiconBuilder(currentUtterances, turn2speaker)
 
             val lexiconMetrics = LexiconBasedMeasures(lexicon)
@@ -122,15 +143,28 @@ object OnlineMetricsComputerApp extends LazyLogging {
               alpha = config.alpha,
               beta = config.beta,
               lambda = config.lambda)
+            val selfRepetitionMetrics = SelfRepetitionMeasures(selfRepetitionLexicon)
 
             val speaker = dialogue.turn2rawSpeaker(index)
-            val dialogueStructures = activationMetrics.dialogueStructures.toSeq
+            val interRepetitionDialogueStructures = activationMetrics.dialogueStructures.toSeq
               .sortBy(-_.content.size)
               .map(_.contentStr)
               .mkString(" | ")
-            val csvLine = List(line, index, speaker, utterance.mkString(" "),
+            val selfRepetitionDialogueStructures = selfRepetitionMetrics.dialogueStructures.toSeq
+              .sortBy(-_.content.size)
+              .map(_.contentStr)
+              .mkString(" | ")
+            val csvLine = List(
+              dialogue.name,
+              line.replaceAll(CSVUtils.CSV_SEPARATOR, " "), // replacing column separator just in case
+              index, currentNumTokens,
+              speaker, utterance.mkString(" "),
+              selfRepetitionMetrics.selfExpressionRepetition,
               lexiconMetrics.expressionRepetition,
-              activationMetrics.activation(), dialogueStructures)
+              activationMetrics.activation(), interRepetitionDialogueStructures,
+              selfRepetitionDialogueStructures)
+
+            currentNumTokens += utterance.length
 
             println(CSVUtils.mkCSV(csvLine))
           }
@@ -150,7 +184,8 @@ object OnlineMetricsComputerApp extends LazyLogging {
 
   case class PreprocessedLine(rawLine: String, line: TokenizedUtterance)
 
-  case class PreprocessedDialogue(lines: Array[PreprocessedLine],
+  case class PreprocessedDialogue(name: String,
+                                  lines: Array[PreprocessedLine],
                                   turn2rawSpeaker: Int => String) {
 
     val rawSpeakers =
@@ -195,13 +230,16 @@ object OnlineMetricsComputerApp extends LazyLogging {
         var buffer = ArrayBuffer[PreprocessedLine]()
         var bufferSpeaker = ArrayBuffer[String]()
 
+        val filename = f.getAbsolutePath
+        val name = filename.split("/").last.replaceAll("\\.", "_")
+
         for {
           line <- source.getLines()
         } {
           if (line.trim.isEmpty) { // case: empty line
             // Addition of the buffer if it is non-empty
             if (buffer.nonEmpty) {
-              result.append(PreprocessedDialogue(buffer.toArray, bufferSpeaker))
+              result.append(PreprocessedDialogue(name, buffer.toArray, bufferSpeaker))
             }
             // Re-initialisation of the buffers
             buffer = ArrayBuffer[PreprocessedLine]()
@@ -212,19 +250,24 @@ object OnlineMetricsComputerApp extends LazyLogging {
 
             // Reading the line
             val content = line.split("\t")
-            assert(content.size == 2, s"Line is not splittable: $line")
+            assert(content.size <= 2, s"Line is not splittable: $line")
             // content(0) is the speaker
             val speaker = speakerNormalisation(content(0))
             bufferSpeaker.append(speaker)
 
-            val utterance = content(1) // surface form of the utterance
+            // surface form of the utterance
+            val utterance = if(content.size > 1){
+              content(1)
+            } else {
+              ""
+            }
 
             buffer.append(PreprocessedLine(line, preprocess(utterance)))
           }
         }
         // Adding the last dialogue of the file
         if (buffer.nonEmpty) {
-          result.append(PreprocessedDialogue(buffer.toArray, bufferSpeaker))
+          result.append(PreprocessedDialogue(name, buffer.toArray, bufferSpeaker))
         }
 
         result.toArray
