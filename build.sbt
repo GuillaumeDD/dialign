@@ -29,5 +29,8 @@ lazy val root = (project in file(".")).
 
 scalacOptions ++= Seq("-deprecation", "-Ywarn-unused-import",  "-Ywarn-unused", "-Ywarn-dead-code", "-optimize")
 
-assemblyJarName in assembly := "dialign.jar"
-mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
+// assemblyJarName in assembly := "dialign.jar"
+// mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
+
+assemblyJarName in assembly := "dialignMeasures.jar"
+mainClass in assembly := Some("dialign.app.OnlineMetricsComputerApp")
