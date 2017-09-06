@@ -41,6 +41,7 @@ package dialign.metrics.offline
 import dialign.Speaker.Speaker
 import dialign._
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 /**
@@ -67,6 +68,31 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
     result
   }
 
+  protected def reduceByKey[K, V](pairSeq: Iterable[(K, V)], f: (V, V) => V): Map[K, V] = {
+    val m = mutable.Map[K, V]()
+
+    @tailrec
+    def reduce(seq: Iterable[(K, V)]): Unit = {
+      if (seq.nonEmpty) {
+        val (key, value) = seq.head
+
+        if (m.contains(key)) {
+          m(key) = f(m(key), value)
+        } else {
+          m(key) = value
+        }
+
+        reduce(seq.tail)
+      }
+    }
+
+    reduce(pairSeq)
+
+    m.toMap
+  }
+
+  protected def log2(x: Double): Double =
+    Math.log10(x) / Math.log10(2.0d)
 
   private case class SharedVocabulary(vocabularies: Map[Speaker, Set[String]]) {
     lazy val union: Set[String] = vocabularies.values.reduceLeft(_ union _)
@@ -148,6 +174,67 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
 
   lazy val numExpressions: Int = lexicon.expressions.size
 
+  /*
+    * Mapping: size (in tokens) -> number of instances of *free* expr. with that pattern
+    */
+  protected lazy val size2freq: Map[Int, Int] = {
+    import lexicon._
+
+    /*
+     * Paired iterable of (expr. length in tokens, freq. of expr. of the given lenght)
+     *
+     */
+    val pairedIterable = lexicon.expressions
+      .toList // from set to list to avoid disappearing pairs
+      .map(e => (e.content.length, e.freeFreq)) // here: selection of free expression
+
+
+    reduceByKey[Int, Int](pairedIterable, _ + _)
+  }
+
+  /**
+    * Average length of the instances of expression
+    *
+    */
+  lazy val L: Double = {
+    var m = 0.0d
+    var total = 0.0d
+
+    for ((size, freq) <- size2freq) {
+      m += size * freq
+      total += freq
+    }
+
+    m / total
+  }
+
+  /**
+    * Size (in number of tokens) of the biggest expression
+    */
+  lazy val LMAX: Int = lexicon.expressions.map(_.content.size).max
+
+  /**
+    * The Shannon entropy of the probability distribution of the expression sizes (in tokens)
+    */
+  lazy val ENTR: Double = {
+    // The Shannon entropy of the probability distribution of the diagonal line lengths
+
+    // Computation of the normalisation ratio (to estimate probabilities from freq.)
+    val total = size2freq.values.sum
+
+    val entropyComponents =
+      for ((_, freq) <- size2freq)
+        yield {
+          // Computation of probability p of the given expression size
+          val p = freq.toDouble / total.toDouble
+          // Component of the entropy
+          p * log2(p)
+        }
+
+    val entropy = -entropyComponents.sum
+    entropy
+  }
+
   lazy val expressionVariety: Double = numExpressions.toDouble / numTokens.toDouble
 
   /**
@@ -200,9 +287,11 @@ object DialogueLexiconMeasures {
       "S1/Initiated Expression (IE_S1)", "S1/Expression Repetition (ER_S1)", "S1/tokens (%)",
       "S2/Initiated Expression (IE_S2)", "S2/Expression Repetition (ER_S2)", "S2/tokens (%)",
       "Voc. Overlap", "Voc. Overlap S1", "Voc. Overlap S2",
+      // Other measures
+      "ENTR", "L", "LMAX",
       // Self-repetition measures
-      "SR/S1/ELS", "SR/S1/EV", "SR/S1/ER",
-      "SR/S2/ELS", "SR/S2/EV", "SR/S2/ER"
+      "SR/S1/ELS", "SR/S1/EV", "SR/S1/ER", "SR/S1/ENTR", "SR/S1/L", "SR/S1/LMAX",
+      "SR/S2/ELS", "SR/S2/EV", "SR/S2/ER", "SR/S2/ENTR", "SR/S2/L", "SR/S2/LMAX"
     )
     CSVUtils.mkCSV(heading)
   }
@@ -220,7 +309,8 @@ object DialogueLexiconMeasures {
       initiatedExpressionsBy(A), expressionRepetitionBy(A), producedTokensBy(A),
       initiatedExpressionsBy(B), expressionRepetitionBy(B), producedTokensBy(B),
       // Shared vocabulary measures
-      sharedVocabulary, sharedVocabularyBy(A), sharedVocabularyBy(B)
+      sharedVocabulary, sharedVocabularyBy(A), sharedVocabularyBy(B),
+      ENTR, L, LMAX
     )
 
     CSVUtils.mkCSV(data)
@@ -235,7 +325,7 @@ object DialogueLexiconMeasures {
 
     val data = List(
       // Expression model measures
-      numExpressions, expressionVariety, expressionSelfRepetition
+      numExpressions, expressionVariety, expressionSelfRepetition, ENTR, L, LMAX
     )
 
     CSVUtils.mkCSV(data)

@@ -118,7 +118,12 @@ class DialogueLexicon(
   /*
    * CONTEXTUALISED EXPRESSION
    */
+  /**
+    * Computes the number of utterances in which the given expression appears (in a free or constrained form)
+    *
+    */
   def freq(expr: Expression): Int = expr.freq
+
 
   def numberOfDifferentSpeakers(expr: Expression): Int = expr.numberOfDifferentSpeakers
 
@@ -128,8 +133,51 @@ class DialogueLexicon(
     * @param expr
     */
   implicit class ContextualisedExpression(expr: Expression) {
-
+    /**
+      * Computes the number of utterances in which the given expression appears (in a free or constrained form)
+      *
+      */
     def freq: Int = lexicon.expr2freq(expr)
+
+    /**
+      * Computes the number of utterances in which the given expression appears in a *free* form
+      *
+      * @note This operation is not efficient.
+      */
+    def freeFreq(): Int = {
+      val numberOfAppearances =
+        for {
+          turnID <- expr2turnID(expr).toList // Set to List to avoid surprise when mapping to the number of starting positions
+          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty)
+        } yield {
+          if (startingPos.size > 0) {
+            1
+          } else {
+            0
+          }
+        }
+
+      numberOfAppearances.sum
+    }
+
+    /**
+      * Computes the number of occurrences in which the given expression appears in a *free* form
+      *
+      * It may appear several times in the same utterance.
+      *
+      * @note This operation is not efficient.
+      */
+    def freeFreqFromPos(): Int = {
+      val numberOfAppearances =
+        for {
+          turnID <- expr2turnID(expr).toList // Set to List to avoid surprise when mapping to the number of starting positions
+          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty)
+        } yield {
+          startingPos.size
+        }
+
+      numberOfAppearances.sum
+    }
 
     def numberOfDifferentSpeakers: Int = lexicon.expr2numSpeakers(expr)
 
@@ -268,6 +316,7 @@ class DialogueLexicon(
 
     /**
       * Computes the ratio of tokens belonging to an *established* expression in this turn
+      *
       * @see rawExprsTokenSize method is a similar method that does not take into account expression establishment
       *
       */
@@ -289,6 +338,7 @@ class DialogueLexicon(
 
     /**
       * Computes the ratio of tokens belonging to an expression (without taking into account establishment) in this turn
+      *
       * @see exprsTokenSize method is a similar method that takes into account expression establishment
       */
     lazy val rawExprsTokenSize: Int = {
@@ -375,14 +425,14 @@ object DialogueLexicon {
         }
     })
 
-    buffer.append(CSVUtils.mkCSV(List("Freq.", "Size", "Surface Form",
+    buffer.append(CSVUtils.mkCSV(List("Freq.", "Free Freq.", "Size", "Surface Form",
       "Establishment turn", "Spanning", "Priming", "First Speaker",
       "Turns")))
     buffer.append("\n")
     for (expr <- sortedExpressions) {
       val establishementTurn = expr.establishementTurnID()
 
-      buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.content.size, expr.content.mkString(" "),
+      buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.freeFreq(), expr.content.size, expr.content.mkString(" "),
         establishementTurn, expr.span(), expr.priming(), expr.firstSpeaker(),
         expr.turns().mkString(", "))))
       buffer.append("\n")
