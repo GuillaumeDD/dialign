@@ -211,7 +211,14 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
   /**
     * Size (in number of tokens) of the biggest expression
     */
-  lazy val LMAX: Int = lexicon.expressions.map(_.content.size).max
+  lazy val LMAX: Int = {
+    val exprSizes = lexicon.expressions.map(_.content.size)
+    if(exprSizes.nonEmpty){
+      exprSizes.max
+    } else {
+      0
+    }
+  }
 
   /**
     * The Shannon entropy of the probability distribution of the expression sizes (in tokens)
