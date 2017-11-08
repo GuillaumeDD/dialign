@@ -58,6 +58,7 @@ object LexiconExporterApp extends LazyLogging {
                     outputFile: File = new File("lexicon-RSTP.csv"),
                     withDelexicalisation: Boolean = false,
                     withNormalisation: Boolean = false,
+                    withBeginAndEndMarkers: Boolean = false,
                     rstpType: String = "all",
                     filenamePrefix: String = "",
                     filenameSuffix: String = "",
@@ -89,6 +90,9 @@ object LexiconExporterApp extends LazyLogging {
 
     opt[Unit]('n', "normalisation").action((x, c) => c.copy(withNormalisation = true)).
       text("activates normalisation")
+
+    opt[Unit]('m', "markers").action((x, c) => c.copy(withBeginAndEndMarkers = true)).
+      text("adds begin and end markers to utterances")
 
     opt[String]('p', "prefix").optional().valueName("<filename_prefix>").
       action((x, c) => c.copy(filenamePrefix = x)).
@@ -138,8 +142,14 @@ object LexiconExporterApp extends LazyLogging {
             Delexicalizer.identity _
           }
 
+          val tokenize = if(config.withBeginAndEndMarkers){
+            Tokenizer.tokenize _
+          } else {
+            Tokenizer.tokenizeWithoutMarkers _
+          }
+
           val dialogues = for (file <- inputFiles)
-            yield DialogueReader.load(file, Tokenizer.tokenize,
+            yield DialogueReader.load(file, tokenize,
               delexicalize,
               normalize)
 
