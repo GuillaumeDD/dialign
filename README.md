@@ -2,6 +2,8 @@
 
 Latest version: 0.1.1 (alpha)
 
+Latest progress of dialign involving self-repetition measures and new measures (ENTR, L, LMAX) can be found on the ['experimental' branch](https://github.com/GuillaumeDD/dialign/tree/experimental) of this repository.
+
 dialign is  a software that  provides automatic and generic  measures of
 verbal alignment in  dyadic dialogue based on  sequential pattern mining
 at the level of surface of text utterances.
