@@ -288,39 +288,60 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
 
 object DialogueLexiconMeasures {
 
-  val headingToCSV: String = {
-    val heading = List("ID", "Num. utterances", "Num. tokens",
-      "Expression Lexicon Size (ELS)", "Expression Variety (EV)", "Expression Repetition (ER)",
-      "S1/Initiated Expression (IE_S1)", "S1/Expression Repetition (ER_S1)", "S1/tokens (%)",
-      "S2/Initiated Expression (IE_S2)", "S2/Expression Repetition (ER_S2)", "S2/tokens (%)",
-      "Voc. Overlap", "Voc. Overlap S1", "Voc. Overlap S2",
-      // Other measures
-      "ENTR", "L", "LMAX",
-      // Self-repetition measures
-      "SR/S1/ELS", "SR/S1/EV", "SR/S1/ER", "SR/S1/ENTR", "SR/S1/L", "SR/S1/LMAX",
-      "SR/S2/ELS", "SR/S2/EV", "SR/S2/ER", "SR/S2/ENTR", "SR/S2/L", "SR/S2/LMAX"
-    )
-    CSVUtils.mkCSV(heading)
+  object speakerIndependant {
+    val headingToCSV: String = {
+      val heading = List("ID", "Num. utterances", "Num. tokens",
+        "Expression Lexicon Size (ELS)", "Expression Variety (EV)", "Expression Repetition (ER)",
+        "Voc. Overlap",
+        "ENTR", "L", "LMAX",
+      )
+      CSVUtils.mkCSV(heading)
+    }
+
+    def toCSV(measures: DialogueLexiconMeasures): String = {
+      import measures._
+
+      val data = List(
+        // General stats
+        numUtterances, numTokens,
+        // Expression model measures
+        numExpressions, expressionVariety, expressionRepetition,
+        sharedVocabulary,
+        ENTR, L, LMAX
+      )
+
+      CSVUtils.mkCSV(data)
+    }
   }
 
-  def toCSV(measures: DialogueLexiconMeasures): String = {
-    import Speaker.{A, B}
-    import measures._
+  object speakerDependant {
+    val headingToCSV: String = {
+      val heading = List("ID",
+        "S1/Initiated Expression (IE_S1)", "S1/Expression Repetition (ER_S1)", "S1/tokens (%)",
+        "S2/Initiated Expression (IE_S2)", "S2/Expression Repetition (ER_S2)", "S2/tokens (%)",
 
-    val data = List(
-      // General stats
-      numUtterances, numTokens,
-      // Expression model measures
-      numExpressions, expressionVariety, expressionRepetition,
-      // Speaker-specific measures
-      initiatedExpressionsBy(A), expressionRepetitionBy(A), producedTokensBy(A),
-      initiatedExpressionsBy(B), expressionRepetitionBy(B), producedTokensBy(B),
-      // Shared vocabulary measures
-      sharedVocabulary, sharedVocabularyBy(A), sharedVocabularyBy(B),
-      ENTR, L, LMAX
-    )
+        "Voc. Overlap S1", "Voc. Overlap S2",
 
-    CSVUtils.mkCSV(data)
+        "SR/S1/ELS", "SR/S1/EV", "SR/S1/ER", "SR/S1/ENTR", "SR/S1/L", "SR/S1/LMAX",
+        "SR/S2/ELS", "SR/S2/EV", "SR/S2/ER", "SR/S2/ENTR", "SR/S2/L", "SR/S2/LMAX"
+      )
+      CSVUtils.mkCSV(heading)
+    }
+
+    def toCSV(measures: DialogueLexiconMeasures): String = {
+      import Speaker.{A, B}
+      import measures._
+
+      val data = List(
+        // Speaker-specific measures
+        initiatedExpressionsBy(A), expressionRepetitionBy(A), producedTokensBy(A),
+        initiatedExpressionsBy(B), expressionRepetitionBy(B), producedTokensBy(B),
+        // Shared vocabulary measures
+        sharedVocabularyBy(A), sharedVocabularyBy(B),
+      )
+
+      CSVUtils.mkCSV(data)
+    }
   }
 
   /**

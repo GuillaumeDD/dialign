@@ -43,7 +43,7 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import dialign.{CSVUtils, DialogueLexiconBuilder, IO, Speaker}
 import dialign.metrics.offline.DialogueLexiconMeasures
-import dialign.metrics.offline.DialogueLexiconMeasures.{toCSV, toCSVSelfRepetition}
+import dialign.metrics.offline.DialogueLexiconMeasures.{speakerIndependant, speakerDependant, toCSVSelfRepetition}
 import dialign.IO.{DialogueReader, getFilenames}
 import dialign.DialogueLexicon.{mkHierarchicalInventory, mkSelfRepetitionHierarchicalInventory, mkStringTurns}
 import dialign.DialogueLexiconBuilder.ExpressionType
@@ -62,7 +62,8 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
   case class Config(inputDirectory: File = new File("."),
                     outputDirectory: File = new File("."),
-                    outputSynthesisFilename: String = "dial-synthesis.csv",
+                    outputSpeakerIndependantMeasuresFilename: String = "metrics-speaker-independant.csv",
+                    outputSpeakerDependantMeasuresFilename: String = "metrics-speaker-dependant.csv",
                     withNormalisation: Boolean = false,
                     filenamePrefix: String = "",
                     filenameSuffix: String = "",
@@ -103,9 +104,13 @@ object DialogueLexiconExporterApp extends LazyLogging {
       action((x, c) => c.copy(outputDirectory = x)).
       text("output directory for the computed dialogue lexicon files")
 
-    opt[String]('y', "synthesis").optional().valueName("<filename_synthesis>").
-      action((x, c) => c.copy(outputSynthesisFilename = x)).
-      text("output filename for the synthesis file regrouping measures on all the dialogues")
+    opt[String]('n', "independant").optional().valueName("<filename>").
+      action((x, c) => c.copy(outputSpeakerIndependantMeasuresFilename = x)).
+      text("output filename for the synthesis file regrouping speaker *independant* measures on all the dialogues")
+
+    opt[String]('d', "dependant").optional().valueName("<filename>").
+      action((x, c) => c.copy(outputSpeakerDependantMeasuresFilename = x)).
+      text("output filename for the synthesis file regrouping speaker *dependant* measures on all the dialogues")
 
     opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
       text("activates token normalisation")
@@ -167,18 +172,29 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
           val results = for (dialogue <- dialogues)
             yield {
-              val result = DialogueProcessor(OUTPUT_DIR, dialogue).process()
-              (dialogue.name, result)
+              val (speakerIndependantMeasures, speakerDependantMeasures)= DialogueProcessor(OUTPUT_DIR, dialogue).process()
+              (dialogue.name, speakerIndependantMeasures, speakerDependantMeasures)
             }
 
-          // Outputing the synthesis regrouping a synthesis of all the files
-          val PATH_FILENAME_OUTPUT = s"$OUTPUT_DIR/${config.outputSynthesisFilename}"
-          logger.debug(s"Outputing dialogue synthesis in $PATH_FILENAME_OUTPUT")
-          IO.withFile(PATH_FILENAME_OUTPUT) {
+          // Outputing the synthesis for speaker *independant* measures regrouping a synthesis of all the files
+          val PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerIndependantMeasuresFilename}"
+          logger.debug(s"Outputing speaker independant measures in $PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES")
+          IO.withFile(PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES) {
             writer =>
-              writer.println(DialogueLexiconMeasures.headingToCSV)
-              for ((name, result) <- results) {
-                writer.println(CSVUtils.join(name, result))
+              writer.println(DialogueLexiconMeasures.speakerIndependant.headingToCSV)
+              for ((name, speakerIndependantMeasures, _) <- results) {
+                writer.println(CSVUtils.join(name, speakerIndependantMeasures))
+              }
+          }
+
+          // Outputing the synthesis for speaker *dependant* measures regrouping a synthesis of all the files
+          val PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerDependantMeasuresFilename}"
+          logger.debug(s"Outputing speaker dependant measures in $PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES")
+          IO.withFile(PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES) {
+            writer =>
+              writer.println(DialogueLexiconMeasures.speakerDependant.headingToCSV)
+              for ((name, _, speakerDependantMeasures) <- results) {
+                writer.println(CSVUtils.join(name, speakerDependantMeasures))
               }
           }
         }
@@ -230,16 +246,24 @@ object DialogueLexiconExporterApp extends LazyLogging {
       turnID2Speaker,
       ExpressionType.OWN_REPETITION_ONLY)
 
-    def process(): String = {
+    def process(): (String, String) = {
       outputLexicon()
       outputSelfRepetitionLexicon()
       outputDialogue()
 
-      val otherRepetitionMeasures = toCSV(DialogueLexiconMeasures(lexicon))
+
+      val otherRepetitionMeasures = DialogueLexiconMeasures(lexicon)
+      // Speaker independant measures
+      val speakerIndependantMeasures = speakerIndependant.toCSV(otherRepetitionMeasures)
+      // Speaker dependant measures
+      val speakerDependantMeasuresOtherRepetition = speakerDependant.toCSV(otherRepetitionMeasures)
       val selfRepetitionA = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForA))
       val selfRepetitionB = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForB))
 
-      CSVUtils.join(otherRepetitionMeasures, CSVUtils.join(selfRepetitionA, selfRepetitionB))
+      val speakerDependantMeasures = CSVUtils.join(speakerDependantMeasuresOtherRepetition,
+                                                   CSVUtils.join(selfRepetitionA, selfRepetitionB))
+
+      (speakerIndependantMeasures, speakerDependantMeasures)
     }
 
 
