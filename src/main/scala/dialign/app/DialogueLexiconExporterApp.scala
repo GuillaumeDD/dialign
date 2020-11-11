@@ -72,17 +72,34 @@ object DialogueLexiconExporterApp extends LazyLogging {
   val parser = new scopt.OptionParser[Config]("dialign") {
     head("dialign", "2017.08")
 
-    opt[File]('i', "input").required().valueName("<directory>").
+    opt[File]('i', "input").required().valueName("<directory|file>").
       validate(dirname =>
-        if (dirname.isDirectory) success
-        else failure("Input must be a directory!")).
+        if (dirname.isDirectory || dirname.isFile) success
+        else failure("Input must be a directory or a file!")).
       action((x, c) => c.copy(inputDirectory = x)).
-      text("input directory containing dialogue files")
+      text("single input file or an input directory containing dialogue files")
 
     opt[File]('o', "output").optional().valueName("<directory>").
       validate(dirname =>
-        if (dirname.isDirectory) success
-        else failure("Output must be a directory!")).
+        if (dirname.exists()) {
+          // Output directory exists
+          if (dirname.isDirectory) {
+            if (dirname.canWrite) {
+              success
+            } else{
+              failure(s"Cannot write in output directory: $dirname")
+            }
+          } else {
+            failure(s"It seems that '$dirname' is not a writeable directory. Output must be a directory.")
+          }
+        } else {
+          // Output directory does not exists
+          if(dirname.mkdir()) {
+            success
+          } else {
+            failure(s"Cannot create output directory: $dirname")
+          }
+        }).
       action((x, c) => c.copy(outputDirectory = x)).
       text("output directory for the computed dialogue lexicon files")
 
@@ -110,8 +127,18 @@ object DialogueLexiconExporterApp extends LazyLogging {
     parser.parse(args, Config()) match {
       case Some(config) =>
         // Loading files
-        val inputFiles = getFilenames(config.inputDirectory,
-          config.filenamePrefix, config.filenameSuffix, config.filenameExtension)
+        val inputFiles =
+          if(config.inputDirectory.isDirectory) {
+            // Case: directory
+            getFilenames(config.inputDirectory,
+              config.filenamePrefix, config.filenameSuffix, config.filenameExtension)
+          } else if(config.inputDirectory.isFile) {
+            // Case: single file
+            List(config.inputDirectory)
+          } else {
+            // Case: unexpected
+            List.empty[File]
+          }
 
         if (inputFiles.isEmpty) {
           println(s"No dialogue file found in directory '${config.inputDirectory.getAbsolutePath}'" +
