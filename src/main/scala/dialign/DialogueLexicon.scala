@@ -76,7 +76,7 @@ class DialogueLexicon(
   def exprsInitialisedBy(speaker: Speaker): Set[Expression] =
     for {
       expr <- expressions
-      if expr.firstSpeaker == speaker
+      if expr.firstSpeaker() == speaker
     } yield (expr)
 
   /**
@@ -148,7 +148,7 @@ class DialogueLexicon(
       val numberOfAppearances =
         for {
           turnID <- expr2turnID(expr).toList // Set to List to avoid surprise when mapping to the number of starting positions
-          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty)
+          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty[Int])
         } yield {
           if (startingPos.size > 0) {
             1
@@ -171,7 +171,7 @@ class DialogueLexicon(
       val numberOfAppearances =
         for {
           turnID <- expr2turnID(expr).toList // Set to List to avoid surprise when mapping to the number of starting positions
-          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty)
+          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty[Int])
         } yield {
           startingPos.size
         }

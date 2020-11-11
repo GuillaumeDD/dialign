@@ -155,7 +155,7 @@ object CorpusLexicon extends LazyLogging {
         val buffer = new StringBuilder()
 
         // TODO the following code might be subject to optimization in the future
-        val sortedRSTP = expressions.toList.sortWith({
+        val sortedRSTP = expressions().toList.sortWith({
           case (rstp1, rstp2) =>
             if (rstp1.content.size > rstp2.content.size) {
               // sorting by size DESC

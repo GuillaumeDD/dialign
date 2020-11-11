@@ -85,13 +85,13 @@ object LexiconExporterApp extends LazyLogging {
         else failure(s"RSTP type must be one of this value: all|intra|inter (here: '$rstpType')")).
       text("RSTP to consider: all|intra|inter")
 
-    opt[Unit]('d', "delexicalisation").action((x, c) => c.copy(withDelexicalisation = true)).
+    opt[Unit]('d', "delexicalisation").action((_, c) => c.copy(withDelexicalisation = true)).
       text("activates delexicalisation")
 
-    opt[Unit]('n', "normalisation").action((x, c) => c.copy(withNormalisation = true)).
+    opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
       text("activates normalisation")
 
-    opt[Unit]('m', "markers").action((x, c) => c.copy(withBeginAndEndMarkers = true)).
+    opt[Unit]('m', "markers").action((_, c) => c.copy(withBeginAndEndMarkers = true)).
       text("adds begin and end markers to utterances")
 
     opt[String]('p', "prefix").optional().valueName("<filename_prefix>").

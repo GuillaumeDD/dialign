@@ -41,10 +41,10 @@ object SelfRepetitionLexiconExporterApp extends LazyLogging {
       action((x, c) => c.copy(outputFilenamePrefix = x)).
       text("output filename prefix for computed lexicon files")
 
-    opt[Unit]('n', "normalisation").action((x, c) => c.copy(withNormalisation = true)).
+    opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
       text("activates token normalisation")
 
-    opt[Unit]('m', "markers").action((x, c) => c.copy(withBeginAndEndMarkers = true)).
+    opt[Unit]('m', "markers").action((_, c) => c.copy(withBeginAndEndMarkers = true)).
       text("adds begin and end markers to utterances")
 
     opt[String]('p', "prefix").optional().valueName("<filename_prefix>").
@@ -136,7 +136,7 @@ object SelfRepetitionLexiconExporterApp extends LazyLogging {
      * from the other speaker replaced by an empty utterances
      */
     val speaker2utterances = (
-      for (speaker <- Speaker.values)
+      for (speaker <- Speaker.values.toSeq)
         yield ({
           // Keeping the sequence of utterances intact but replacing utterances from the
           // other speaker by empty utterances

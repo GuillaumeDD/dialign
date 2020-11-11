@@ -122,7 +122,7 @@ object DialogueLexiconBuilder extends LazyLogging {
 
           // TODO the following code might be optimized in the future
           val positionsBySpeaker = positions.groupBy({
-            case (turnID, startPos) => turnID2Speaker(turnID)
+            case (turnID, _) => turnID2Speaker(turnID)
           })
           val numberOfSpeaker = positionsBySpeaker.size
 
@@ -184,7 +184,7 @@ object DialogueLexiconBuilder extends LazyLogging {
       }
 
       val subsequencesAll = mutable.Set[Expression]() // TODO the following code might be optimized in the future
-      for (expr <- orderedSubsequences.dequeueAll) {
+      for (expr <- orderedSubsequences.dequeueAll[Expression]) {
         // subsequences are ordered by size
         subsequencesAll += expr
 
@@ -230,11 +230,11 @@ object DialogueLexiconBuilder extends LazyLogging {
 
 
       (subsequences.filter(appearsAtLeastOnceFreeExpression(_)).toSet,
-        expr2positions.mapValues(seqIDandPos => seqIDandPos.map(_._1)).toMap,
-        turnID2expr2startingPos.mapValues(_.filterKeys(appearsAtLeastOnceFreeExpression(_))).toMap,
-        turnID2expr2startingPosConstrained.mapValues(_.filterKeys(appearsAtLeastOnceFreeExpression(_))).toMap,
-        expr2freq.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap,
-        expr2numSpeaker.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap
+        expr2positions.view.mapValues(seqIDandPos => seqIDandPos.map(_._1)).toMap,
+        turnID2expr2startingPos.view.mapValues(_.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap).toMap,
+        turnID2expr2startingPosConstrained.view.mapValues(_.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap).toMap,
+        expr2freq.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap,
+        expr2numSpeaker.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap
       )
     }
 

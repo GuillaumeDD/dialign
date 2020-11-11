@@ -49,7 +49,7 @@ import scala.io.{BufferedSource, Source}
 package object IO {
   type BytePosition = Long
 
-  def toFile(content: String, filename: String) {
+  def toFile(content: String, filename: String): Unit = {
     val writer = new PrintWriter(new File(filename))
     try {
       writer.write(content)
@@ -150,7 +150,7 @@ package object IO {
       s"Unable to skip $startingByte bytes from the file")
 
     // Retrieve and return the line
-    val builder = mutable.StringBuilder.newBuilder
+    val builder = new mutable.StringBuilder()
     var content: Int = inputStream.read()
     var endOfLineReached = false
     while ((content != -1) && !endOfLineReached) {
@@ -183,7 +183,7 @@ package object IO {
     val filenames = directory.list(new FilenameFilter {
       override def accept(file: File, s: String) =
         s.startsWith(prefix) && s.endsWith(s"$suffix.$extension")
-    })
+    }).toIndexedSeq
 
     // Returning files
     val inputDir = directory.getAbsolutePath

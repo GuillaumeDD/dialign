@@ -1,16 +1,16 @@
-val scalatest = "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test"
-val logging_library = "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0"
+val scalatest = "org.scalatest" %% "scalatest" % "3.1.1" % "test"
+val logging_library = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 val slf4j = "org.slf4j" % "slf4j-api" % "1.7.21"
 val logback_core = "ch.qos.logback" % "logback-core" % "1.1.7"
 val logback_classic = "ch.qos.logback" % "logback-classic" % "1.1.7"
 val junit = "junit" % "junit" % "4.12" % "test"
-val scopt = "com.github.scopt" %% "scopt" % "3.4.0"
-val gstlib = "com.github.guillaumedd" %% "gstlib" % "0.1.2"
+val scopt = "com.github.scopt" %% "scopt" % "3.7.1"
+val gstlib = "com.github.guillaumedd" %% "gstlib" % "0.1.3"
 
 lazy val commonSettings = Seq(
-  organization := "fr.isir",
-  version := "0.1",
-  scalaVersion := "2.11.11"
+  organization := "com.github.guillaumedd",
+  version := "0.2",
+  scalaVersion := "2.13.3"
 )
 
 lazy val root = (project in file(".")).
@@ -27,10 +27,11 @@ lazy val root = (project in file(".")).
     libraryDependencies += gstlib
   )
 
-scalacOptions ++= Seq("-deprecation", "-Ywarn-unused-import",  "-Ywarn-unused", "-Ywarn-dead-code", "-optimize")
+scalacOptions ++= Seq("-deprecation", "-Ywarn-unused", "-Ywarn-dead-code",
+                      "-opt:l:inline", "-opt-inline-from:**", "-Ywarn-unused:imports")
 
-// assemblyJarName in assembly := "dialign.jar"
-// mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
+assemblyJarName in assembly := "dialign.jar"
+mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
 
-assemblyJarName in assembly := "dialignMeasures.jar"
-mainClass in assembly := Some("dialign.app.OnlineMetricsComputerApp")
+//assemblyJarName in assembly := "dialignMeasures.jar"
+//mainClass in assembly := Some("dialign.app.OnlineMetricsComputerApp")

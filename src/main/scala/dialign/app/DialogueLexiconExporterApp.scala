@@ -90,7 +90,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
       action((x, c) => c.copy(outputSynthesisFilename = x)).
       text("output filename for the synthesis file regrouping measures on all the dialogues")
 
-    opt[Unit]('n', "normalisation").action((x, c) => c.copy(withNormalisation = true)).
+    opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
       text("activates token normalisation")
 
     opt[String]('p', "prefix").optional().valueName("<filename_prefix>").
@@ -173,7 +173,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
      * from the other speaker replaced by an empty utterances
      */
     val speaker2utterances = (
-      for (speaker <- Speaker.values)
+      for (speaker <- Speaker.values.toSeq)
         yield ({
           // Keeping the sequence of utterances intact but replacing utterances from the
           // other speaker by empty utterances

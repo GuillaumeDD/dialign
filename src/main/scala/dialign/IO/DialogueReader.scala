@@ -158,7 +158,7 @@ object DialogueReader {
           utterances.append(utterance)
         }
 
-        (utterances.toArray, line2speaker.toArray)
+        (utterances.toIndexedSeq, line2speaker.toIndexedSeq)
     }
 
     // Building a valid name

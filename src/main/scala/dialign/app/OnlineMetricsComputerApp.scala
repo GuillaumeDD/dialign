@@ -64,7 +64,7 @@ object OnlineMetricsComputerApp extends LazyLogging {
       action((x, c) => c.copy(inputFile = x)).
       text("input file containing dialogues")
 
-    opt[Unit]('n', "normalisation").action((x, c) => c.copy(withNormalisation = true)).
+    opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
       text("activates normalisation")
 
     opt[Double]('a', "alpha").valueName("<double>").action((x, c) => c.copy(alpha = x)).
@@ -131,11 +131,11 @@ object OnlineMetricsComputerApp extends LazyLogging {
 
             // Computing metrics
             val selfRepetitionLexicon = DialogueLexiconBuilder(
-              currentUtterancesFor(lastSpeaker),
+              currentUtterancesFor(lastSpeaker).toIndexedSeq,
               turn2speaker,
               ExpressionType.OWN_REPETITION_ONLY)
 
-            val lexicon = DialogueLexiconBuilder(currentUtterances, turn2speaker)
+            val lexicon = DialogueLexiconBuilder(currentUtterances.toIndexedSeq, turn2speaker)
 
             val lexiconMetrics = LexiconBasedMeasures(lexicon)
             val activationMetrics = ActivationBasedMeasures(

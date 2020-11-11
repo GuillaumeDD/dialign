@@ -116,7 +116,7 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
     for (turn <- lexicon.turns) {
       speaker2vocabulary(turn.speaker) ++= turn.content
     }
-    SharedVocabulary(speaker2vocabulary.mapValues(_.toSet))
+    SharedVocabulary(speaker2vocabulary.view.mapValues(_.toSet).toMap)
   }
 
   private case class SpeakerSummary(speaker: Speaker,
@@ -141,7 +141,7 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
   }
 
   private val speaker2stats: Map[dialign.Speaker.Value, SpeakerSummary] =
-    (for (speaker <- Speaker.values)
+    (for (speaker <- Speaker.values.toSeq)
       yield {
         var nbRSTPUsed = 0
         var nbTokens = 0
@@ -186,7 +186,7 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
      */
     val pairedIterable = lexicon.expressions
       .toList // from set to list to avoid disappearing pairs
-      .map(e => (e.content.length, e.freeFreq)) // here: selection of free expression
+      .map(e => (e.content.length, e.freeFreq())) // here: selection of free expression
 
 
     reduceByKey[Int, Int](pairedIterable, _ + _)

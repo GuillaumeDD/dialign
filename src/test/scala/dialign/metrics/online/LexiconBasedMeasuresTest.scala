@@ -39,17 +39,17 @@
 package dialign.metrics.online
 
 import dialign.DialogueLexiconBuilder
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 
-class LexiconBasedMeasuresTest extends FunSuite {
+class LexiconBasedMeasuresTest extends AnyFunSuite {
 
   trait Dialogues {
 
     import dialign.Speaker.{A, B}
     import dialign.nlp.Tokenizer.{tokenizeWithoutMarkers => tokenize}
 
-    val utterances1 = Array(
+    val utterances1 = IndexedSeq(
       tokenize("so what did you and the other animals do next ?"),
       tokenize("the other animals and I swam to the shore , get out of the water and we were all wet .")
     )
@@ -57,7 +57,7 @@ class LexiconBasedMeasuresTest extends FunSuite {
     val lexicon1 = DialogueLexiconBuilder(utterances1, turn2speaker1)
 
 
-    val utterances2 = Array(
+    val utterances2 = IndexedSeq(
       tokenize("foo"),
       tokenize("bar")
     )
