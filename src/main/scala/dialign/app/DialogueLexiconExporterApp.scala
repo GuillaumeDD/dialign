@@ -62,12 +62,12 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
   case class Config(inputDirectory: File = new File("."),
                     outputDirectory: File = new File("."),
-                    outputSpeakerIndependantMeasuresFilename: String = "metrics-speaker-independant.csv",
-                    outputSpeakerDependantMeasuresFilename: String = "metrics-speaker-dependant.csv",
+                    outputSpeakerIndependentMeasuresFilename: String = "metrics-speaker-independent.tsv",
+                    outputSpeakerDependentMeasuresFilename: String = "metrics-speaker-dependent.tsv",
                     withNormalisation: Boolean = false,
                     filenamePrefix: String = "",
                     filenameSuffix: String = "",
-                    filenameExtension: String = "txt"
+                    filenameExtension: String = "tsv"
                    )
 
   val parser = new scopt.OptionParser[Config]("dialign") {
@@ -102,30 +102,32 @@ object DialogueLexiconExporterApp extends LazyLogging {
           }
         }).
       action((x, c) => c.copy(outputDirectory = x)).
-      text("output directory for the computed dialogue lexicon files")
+      text("output directory for the computed dialogue lexicon files (default: ./)")
 
-    opt[String]('n', "independant").optional().valueName("<filename>").
-      action((x, c) => c.copy(outputSpeakerIndependantMeasuresFilename = x)).
-      text("output filename for the synthesis file regrouping speaker *independant* measures on all the dialogues")
+    opt[String]('n', "independent").optional().valueName("<filename>").
+      action((x, c) => c.copy(outputSpeakerIndependentMeasuresFilename = x)).
+      text("output filename for the synthesis file regrouping speaker *independent* measures on all the dialogues " +
+        "(default: metrics-speaker-independent.tsv)")
 
-    opt[String]('d', "dependant").optional().valueName("<filename>").
-      action((x, c) => c.copy(outputSpeakerDependantMeasuresFilename = x)).
-      text("output filename for the synthesis file regrouping speaker *dependant* measures on all the dialogues")
+    opt[String]('d', "dependent").optional().valueName("<filename>").
+      action((x, c) => c.copy(outputSpeakerDependentMeasuresFilename = x)).
+      text("output filename for the synthesis file regrouping speaker *dependent* measures on all the dialogues " +
+        "(default: metrics-speaker-dependent.tsv)")
 
     opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
-      text("activates token normalisation")
+      text("activates token normalisation (default: false)")
 
     opt[String]('p', "prefix").optional().valueName("<filename_prefix>").
       action((x, c) => c.copy(filenamePrefix = x)).
-      text("required prefix of the dialogue file names")
+      text("required prefix of the dialogue file names (default: '')")
 
     opt[String]('s', "suffix").optional().valueName("<filename_suffix>").
       action((x, c) => c.copy(filenameSuffix = x)).
-      text("required suffix of the dialogue file names")
+      text("required suffix of the dialogue file names (default: '')")
 
     opt[String]('e', "extension").optional().valueName("<filename_extension>").
       action((x, c) => c.copy(filenameExtension = x)).
-      text("required extension of the dialogue file names (without the '.'; e.g. 'txt')")
+      text("required extension of the dialogue file names (without the '.'; e.g. 'txt') (default: tsv)")
   }
 
   def main(args: Array[String]): Unit = {
@@ -177,7 +179,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
             }
 
           // Outputing the synthesis for speaker *independant* measures regrouping a synthesis of all the files
-          val PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerIndependantMeasuresFilename}"
+          val PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerIndependentMeasuresFilename}"
           logger.debug(s"Outputing speaker independant measures in $PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES")
           IO.withFile(PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES) {
             writer =>
@@ -188,7 +190,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
           }
 
           // Outputing the synthesis for speaker *dependant* measures regrouping a synthesis of all the files
-          val PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerDependantMeasuresFilename}"
+          val PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerDependentMeasuresFilename}"
           logger.debug(s"Outputing speaker dependant measures in $PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES")
           IO.withFile(PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES) {
             writer =>
