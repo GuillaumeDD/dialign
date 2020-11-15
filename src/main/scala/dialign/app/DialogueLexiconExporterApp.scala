@@ -43,7 +43,7 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import dialign.{CSVUtils, DialogueLexiconBuilder, IO, Speaker}
 import dialign.metrics.offline.DialogueLexiconMeasures
-import dialign.metrics.offline.DialogueLexiconMeasures.{speakerIndependant, speakerDependant, toCSVSelfRepetition}
+import dialign.metrics.offline.DialogueLexiconMeasures.{speakerIndependent, speakerDependent, toCSVSelfRepetition}
 import dialign.IO.{DialogueReader, getFilenames}
 import dialign.DialogueLexicon.{mkHierarchicalInventory, mkSelfRepetitionHierarchicalInventory, mkStringTurns}
 import dialign.DialogueLexiconBuilder.ExpressionType
@@ -174,29 +174,29 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
           val results = for (dialogue <- dialogues)
             yield {
-              val (speakerIndependantMeasures, speakerDependantMeasures)= DialogueProcessor(OUTPUT_DIR, dialogue).process()
-              (dialogue.name, speakerIndependantMeasures, speakerDependantMeasures)
+              val (speakerIndependentMeasures, speakerDependentMeasures)= DialogueProcessor(OUTPUT_DIR, dialogue).process()
+              (dialogue.name, speakerIndependentMeasures, speakerDependentMeasures)
             }
 
           // Outputing the synthesis for speaker *independant* measures regrouping a synthesis of all the files
-          val PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerIndependentMeasuresFilename}"
-          logger.debug(s"Outputing speaker independant measures in $PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES")
-          IO.withFile(PATH_FILENAME_OUTPUT_INDEPENDANT_MEASURES) {
+          val PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerIndependentMeasuresFilename}"
+          logger.debug(s"Outputing speaker independant measures in $PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES")
+          IO.withFile(PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES) {
             writer =>
-              writer.println(DialogueLexiconMeasures.speakerIndependant.headingToCSV)
-              for ((name, speakerIndependantMeasures, _) <- results) {
-                writer.println(CSVUtils.join(name, speakerIndependantMeasures))
+              writer.println(DialogueLexiconMeasures.speakerIndependent.headingToCSV)
+              for ((name, speakerIndependentMeasures, _) <- results) {
+                writer.println(CSVUtils.join(name, speakerIndependentMeasures))
               }
           }
 
           // Outputing the synthesis for speaker *dependant* measures regrouping a synthesis of all the files
-          val PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerDependentMeasuresFilename}"
-          logger.debug(s"Outputing speaker dependant measures in $PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES")
-          IO.withFile(PATH_FILENAME_OUTPUT_DEPENDANT_MEASURES) {
+          val PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerDependentMeasuresFilename}"
+          logger.debug(s"Outputing speaker dependant measures in $PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES")
+          IO.withFile(PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES) {
             writer =>
-              writer.println(DialogueLexiconMeasures.speakerDependant.headingToCSV)
-              for ((name, _, speakerDependantMeasures) <- results) {
-                writer.println(CSVUtils.join(name, speakerDependantMeasures))
+              writer.println(DialogueLexiconMeasures.speakerDependent.headingToCSV)
+              for ((name, _, speakerDependentMeasures) <- results) {
+                writer.println(CSVUtils.join(name, speakerDependentMeasures))
               }
           }
         }
@@ -259,14 +259,14 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
       val otherRepetitionMeasures = DialogueLexiconMeasures(lexicon)
       // Speaker independant measures
-      val speakerIndependantMeasures = speakerIndependant.toCSV(otherRepetitionMeasures)
+      val speakerIndependantMeasures = speakerIndependent.toCSV(otherRepetitionMeasures)
 
       // Speaker dependant measures
       /*
        Note that S1 is speaker A (even though the first speaker in the dialogue might be B), and that
        S2 is speaker B.
        */
-      val speakerDependantMeasuresOtherRepetition = speakerDependant.toCSV(otherRepetitionMeasures)
+      val speakerDependantMeasuresOtherRepetition = speakerDependent.toCSV(otherRepetitionMeasures)
       val selfRepetitionA = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForA))
       val selfRepetitionB = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForB))
 

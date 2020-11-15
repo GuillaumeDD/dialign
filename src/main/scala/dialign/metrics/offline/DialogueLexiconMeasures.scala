@@ -288,7 +288,7 @@ case class DialogueLexiconMeasures(lexicon: DialogueLexicon) {
 
 object DialogueLexiconMeasures {
 
-  object speakerIndependant {
+  object speakerIndependent {
     val headingToCSV: String = {
       val heading = List("ID", "Num. utterances", "Num. tokens",
         "Expression Lexicon Size (ELS)", "Expression Variety (EV)", "Expression Repetition (ER)",
@@ -314,7 +314,7 @@ object DialogueLexiconMeasures {
     }
   }
 
-  object speakerDependant {
+  object speakerDependent {
     val headingToCSV: String = {
       val heading = List("ID",
         "S1", "S2",
