@@ -241,7 +241,7 @@ class DialogueLexicon(
         established = speaker1 && speaker2 && freeFormUsage
       }
       if (!established) {
-        logger.error(s"Unable to compute establishment turn ID for: $expr")
+        logger.debug(s"Unable to compute establishment turn ID for: $expr")
         lexicon.turns.size
       } else {
         turnID

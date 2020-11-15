@@ -41,9 +41,11 @@ package dialign.app
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
+import ch.qos.logback.classic.{Level, Logger}
+import org.slf4j.LoggerFactory
 import dialign.{CSVUtils, DialogueLexiconBuilder, IO, Speaker}
 import dialign.metrics.offline.DialogueLexiconMeasures
-import dialign.metrics.offline.DialogueLexiconMeasures.{speakerIndependent, speakerDependent, toCSVSelfRepetition}
+import dialign.metrics.offline.DialogueLexiconMeasures.{speakerDependent, speakerIndependent, toCSVSelfRepetition}
 import dialign.IO.{DialogueReader, getFilenames}
 import dialign.DialogueLexicon.{mkHierarchicalInventory, mkSelfRepetitionHierarchicalInventory, mkStringTurns}
 import dialign.DialogueLexiconBuilder.ExpressionType
@@ -67,7 +69,8 @@ object DialogueLexiconExporterApp extends LazyLogging {
                     withNormalisation: Boolean = false,
                     filenamePrefix: String = "",
                     filenameSuffix: String = "",
-                    filenameExtension: String = "tsv"
+                    filenameExtension: String = "tsv",
+                    verbose: Boolean = false
                    )
 
   val parser = new scopt.OptionParser[Config]("dialign") {
@@ -128,11 +131,19 @@ object DialogueLexiconExporterApp extends LazyLogging {
     opt[String]('e', "extension").optional().valueName("<filename_extension>").
       action((x, c) => c.copy(filenameExtension = x)).
       text("required extension of the dialogue file names (without the '.'; e.g. 'txt') (default: tsv)")
+
+    opt[Unit]('v', "verbose").action((_, c) => c.copy(verbose = true)).
+      text("display logs on console")
   }
 
   def main(args: Array[String]): Unit = {
     parser.parse(args, Config()) match {
       case Some(config) =>
+        logger.info("Hello world!")
+        if(config.verbose){
+          LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME).asInstanceOf[Logger].setLevel(Level.INFO)
+        }
+
         // Loading files
         val inputFiles =
           if(config.inputDirectory.isDirectory) {
@@ -167,7 +178,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
               tokenize = Tokenizer.tokenizeWithoutMarkers,
               normalize = normalize)
 
-          logger.debug(s"${dialogues.size} dialogue files have been loaded")
+          logger.info(s"${dialogues.size} dialogue files have been loaded")
 
           // Outputing the results
           val OUTPUT_DIR = config.outputDirectory.getAbsolutePath
@@ -180,7 +191,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
           // Outputing the synthesis for speaker *independant* measures regrouping a synthesis of all the files
           val PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerIndependentMeasuresFilename}"
-          logger.debug(s"Outputing speaker independant measures in $PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES")
+          logger.info(s"Outputing speaker independant measures in $PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES")
           IO.withFile(PATH_FILENAME_OUTPUT_INDEPENDENT_MEASURES) {
             writer =>
               writer.println(DialogueLexiconMeasures.speakerIndependent.headingToCSV)
@@ -191,7 +202,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
           // Outputing the synthesis for speaker *dependant* measures regrouping a synthesis of all the files
           val PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES = s"$OUTPUT_DIR/${config.outputSpeakerDependentMeasuresFilename}"
-          logger.debug(s"Outputing speaker dependant measures in $PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES")
+          logger.info(s"Outputing speaker dependant measures in $PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES")
           IO.withFile(PATH_FILENAME_OUTPUT_DEPENDENT_MEASURES) {
             writer =>
               writer.println(DialogueLexiconMeasures.speakerDependent.headingToCSV)
@@ -235,7 +246,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
       ).toMap
 
     // Building the lexicon
-    logger.debug(s"Building dialogue lexicon for dialogue: $dialogueID")
+    logger.info(s"Building dialogue lexicon for dialogue: $dialogueID")
     // Other-repetition lexicon
     val lexicon = DialogueLexiconBuilder(utterances, turnID2Speaker, speaker2str)
     // Self-repetition lexicon for speaker A
@@ -282,7 +293,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
     def outputDialogue(): Unit = {
       val filename_dialogueTXT = s"$outputDir/$dialogueID-dialogue.txt"
-      logger.debug(s"Outputing dialogue in $filename_dialogueTXT (for dialogue: $dialogueID)")
+      logger.info(s"Outputing dialogue in $filename_dialogueTXT (for dialogue: $dialogueID)")
 
       IO.withFile(filename_dialogueTXT) {
         writer =>
@@ -299,7 +310,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
     def outputLexicon(): Unit = {
       val filename_lexicon = s"$outputDir/$dialogueID-lexicon.csv"
-      logger.debug(s"Outputing dialogue lexicon in $filename_lexicon (for dialogue: $dialogueID)")
+      logger.info(s"Outputing dialogue lexicon in $filename_lexicon (for dialogue: $dialogueID)")
 
       IO.withFile(filename_lexicon) {
         writer =>
@@ -310,7 +321,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
     def outputSelfRepetitionLexicon(): Unit = {
       // Self-repetition lexicon for A
       val filename_lexicon_A = s"$outputDir/$dialogueID-lexicon-self-rep-A.csv"
-      logger.debug(s"Outputing self-repetition dialogue lexicon for speaker A in $filename_lexicon_A (for dialogue: $dialogueID)")
+      logger.info(s"Outputing self-repetition dialogue lexicon for speaker A in $filename_lexicon_A (for dialogue: $dialogueID)")
 
       IO.withFile(filename_lexicon_A) {
         writer =>
@@ -319,7 +330,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
       // Self-repetition lexicon for B
       val filename_lexicon_B = s"$outputDir/$dialogueID-lexicon-self-rep-B.csv"
-      logger.debug(s"Outputing self-repetition dialogue lexicon for speaker B in $filename_lexicon_B (for dialogue: $dialogueID)")
+      logger.info(s"Outputing self-repetition dialogue lexicon for speaker B in $filename_lexicon_B (for dialogue: $dialogueID)")
 
       IO.withFile(filename_lexicon_B) {
         writer =>
