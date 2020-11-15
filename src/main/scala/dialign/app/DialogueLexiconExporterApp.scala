@@ -71,7 +71,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
                    )
 
   val parser = new scopt.OptionParser[Config]("dialign") {
-    head("dialign", "2017.08")
+    head("dialign", "2020.11")
 
     opt[File]('i', "input").required().valueName("<directory|file>").
       validate(dirname =>
