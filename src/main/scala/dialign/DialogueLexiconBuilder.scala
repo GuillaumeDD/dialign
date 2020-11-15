@@ -61,6 +61,13 @@ object DialogueLexiconBuilder extends LazyLogging {
       B
     }
 
+  def getSpeakerStrReprDefault(speaker: Speaker): String =
+    if(speaker == A) {
+      "A"
+    } else {
+      "B"
+    }
+
   protected def isValidToken(token: String): Boolean =
     token != Tokenizer.BEGIN_MARKER &&
       token != Tokenizer.END_MARKER &&
@@ -87,6 +94,7 @@ object DialogueLexiconBuilder extends LazyLogging {
     */
   def apply(utterances: IndexedSeq[TokenizedUtterance],
             turnID2Speaker: Int => Speaker = getSpeakerDefault,
+            speaker2string: Speaker => String = getSpeakerStrReprDefault,
             mode: ExpressionType = INTER_REPETITION_ONLY,
             isValidSequence: TokenizedUtterance => Boolean = isValidSequenceDefault): DialogueLexicon = {
     // Pre-processing: building the generalized suffix tree
@@ -245,6 +253,6 @@ object DialogueLexiconBuilder extends LazyLogging {
 
     new DialogueLexicon(expressions, expr2turnID, expr2freq, expr2numSpeakers,
       turnID2expr2startingPos, turnID2expr2startingPosConstrained,
-      utterances, turnID2Speaker)
+      utterances, turnID2Speaker, speaker2string)
   }
 }

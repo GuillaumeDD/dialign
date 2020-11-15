@@ -92,15 +92,22 @@ object DialogueReader {
       "NS"
     }
 
-    protected val rawSpeakers2Speaker = {
+    protected val (rawSpeakers2Speaker, speaker2string) = {
       if (rawSpeakers.isEmpty) {
-        Map.empty[String, Speaker]
+        (Map.empty[String, Speaker], Map.empty[Speaker, String])
       } else if (rawSpeakers.size == 1) {
-        Map(firstSpeaker -> Speaker.A)
+        (Map(firstSpeaker -> Speaker.A), Map(Speaker.A -> firstSpeaker))
       } else {
-        Map(
-          firstSpeaker -> Speaker.A,
-          secondSpeaker -> Speaker.B
+        ( // String -> Speaker
+          Map(
+            firstSpeaker -> Speaker.A,
+            secondSpeaker -> Speaker.B
+          ),
+          // Speaker -> String
+          Map(
+            Speaker.A -> firstSpeaker,
+            Speaker.B -> secondSpeaker
+          )
         )
       }
     }
@@ -113,7 +120,17 @@ object DialogueReader {
       */
     def getSpeaker(index: Int): Speaker =
       rawSpeakers2Speaker(turn2rawSpeaker(index))
+
+    /**
+      * A mapping from a standardized speaker to the raw string representing the speaker
+      *
+      * @param speaker standardized speaker
+      * @return the raw string representation of the speaker
+      */
+    def getRawSpeaker(speaker: Speaker): String =
+      speaker2string(speaker)
   }
+
 
   /**
     * Loads a text file containing a dialogue

@@ -130,6 +130,7 @@ object SelfRepetitionLexiconExporterApp extends LazyLogging {
     val dialogueID = dialogue.name
     val utterances = dialogue.utterances
     val turnID2Speaker = dialogue.getSpeaker _
+    val speaker2str = dialogue.getRawSpeaker _
 
     /*
      * Mapping between a speaker and the sequence of utterances that forms the dialogue but with the utterance
@@ -156,12 +157,12 @@ object SelfRepetitionLexiconExporterApp extends LazyLogging {
     // Self-repetition lexicon for speaker A
     val lexiconForA = DialogueLexiconBuilder(
       speaker2utterances(Speaker.A),
-      turnID2Speaker,
+      turnID2Speaker, speaker2str,
       ExpressionType.OWN_REPETITION_ONLY)
     // Self-repetition lexicon for speaker B
     val lexiconForB = DialogueLexiconBuilder(
       speaker2utterances(Speaker.B),
-      turnID2Speaker,
+      turnID2Speaker, speaker2str,
       ExpressionType.OWN_REPETITION_ONLY)
   }
 

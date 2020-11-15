@@ -67,7 +67,8 @@ class DialogueLexicon(
                        private val turnID2expr2startingPos: Map[Int, Map[Expression, SortedSet[Int]]],
                        private val turnID2expr2startingPosConstrained: Map[Int, Map[Expression, SortedSet[Int]]],
                        utterances: IndexedSeq[TokenizedUtterance],
-                       turnID2Speaker: Int => Speaker
+                       turnID2Speaker: Int => Speaker,
+                       speaker2string: Speaker => String
                      ) extends LazyLogging {
   lexicon =>
 
@@ -86,6 +87,21 @@ class DialogueLexicon(
     * @return speaker of the turn
     */
   def getSpeaker(turnID: Int): Speaker = turnID2Speaker(turnID)
+
+  /**
+    * Computes the speaker string representation of a turn given its index
+    *
+    * @param turnID index of the turn
+    * @return string representation of the speaker of the turn
+    */
+  def getSpeakerStrRepr(turnID: Int) : String = speaker2string(getSpeaker(turnID))
+
+  /**
+    *
+    * @return a pair (string representation for speaker A, string representation for speaker B)
+    */
+  def rawSpeakers(): (String, String) =
+      (speaker2string(A), speaker2string(B))
 
   /**
     * Computes the set of free expressions included in a given turn
@@ -245,6 +261,8 @@ class DialogueLexicon(
       getSpeaker(turns().head)
     }
 
+    def firstSpeakerRepr(): String = speaker2string(firstSpeaker())
+
     /**
       * Computes the ranges of token IDs involved in this expression for a given turn
       *
@@ -289,6 +307,7 @@ class DialogueLexicon(
     */
   case class Turn(id: Int) {
     def speaker: Speaker = getSpeaker(id)
+    def rawSpeaker: String = getSpeakerStrRepr(id)
 
     def content: TokenizedUtterance = utterances(id)
 
@@ -357,7 +376,7 @@ class DialogueLexicon(
     }
 
     override def toString: String =
-      s"""Turn ID=$id| $speaker: ${content.mkString(" ")}
+      s"""Turn ID=$id| $speaker | $rawSpeaker : ${content.mkString(" ")}
                      |\tFree: ${freeExpressions.map(_.mkString).mkString(", ")}
                      |\tConstrained: ${constrainedExpressions.map(_.mkString).mkString(", ")}""".stripMargin
   }
@@ -433,7 +452,7 @@ object DialogueLexicon {
       val establishementTurn = expr.establishementTurnID()
 
       buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.freeFreq(), expr.content.size, expr.content.mkString(" "),
-        establishementTurn, expr.span(), expr.priming(), expr.firstSpeaker(),
+        establishementTurn, expr.span(), expr.priming(), expr.firstSpeakerRepr(),
         expr.turns().mkString(", "))))
       buffer.append("\n")
     }
@@ -479,7 +498,7 @@ object DialogueLexicon {
     buffer.append("\n")
     for (expr <- sortedExpressions) {
       buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.content.size, expr.content.mkString(" "),
-        expr.span(), expr.firstSpeaker(), expr.turns().mkString(", "))))
+        expr.span(), expr.firstSpeakerRepr(), expr.turns().mkString(", "))))
       buffer.append("\n")
     }
 
@@ -491,7 +510,7 @@ object DialogueLexicon {
 
     val buffer = new StringBuilder
     for ((turn, index) <- turns.zipWithIndex) {
-      buffer.append(s"${turn.speaker}|$index: ")
+      buffer.append(s"${turn.speaker}|$index| ${turn.rawSpeaker}: ")
 
       // Recovering the ranges of token positions involved in an expression
       val flatRanges =

@@ -210,6 +210,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
     val dialogueID = dialogue.name
     val utterances = dialogue.utterances
     val turnID2Speaker = dialogue.getSpeaker _
+    val speaker2str = dialogue.getRawSpeaker _
 
     /*
      * Mapping between a speaker and the sequence of utterances that forms the dialogue but with the utterance
@@ -234,16 +235,18 @@ object DialogueLexiconExporterApp extends LazyLogging {
     // Building the lexicon
     logger.debug(s"Building dialogue lexicon for dialogue: $dialogueID")
     // Other-repetition lexicon
-    val lexicon = DialogueLexiconBuilder(utterances, turnID2Speaker)
+    val lexicon = DialogueLexiconBuilder(utterances, turnID2Speaker, speaker2str)
     // Self-repetition lexicon for speaker A
     val lexiconForA = DialogueLexiconBuilder(
       speaker2utterances(Speaker.A),
       turnID2Speaker,
+      speaker2str,
       ExpressionType.OWN_REPETITION_ONLY)
     // Self-repetition lexicon for speaker B
     val lexiconForB = DialogueLexiconBuilder(
       speaker2utterances(Speaker.B),
       turnID2Speaker,
+      speaker2str,
       ExpressionType.OWN_REPETITION_ONLY)
 
     def process(): (String, String) = {
@@ -255,13 +258,21 @@ object DialogueLexiconExporterApp extends LazyLogging {
       val otherRepetitionMeasures = DialogueLexiconMeasures(lexicon)
       // Speaker independant measures
       val speakerIndependantMeasures = speakerIndependant.toCSV(otherRepetitionMeasures)
+
       // Speaker dependant measures
+      /*
+       Note that S1 is speaker A (even though the first speaker in the dialogue might be B), and that
+       S2 is speaker B.
+       */
       val speakerDependantMeasuresOtherRepetition = speakerDependant.toCSV(otherRepetitionMeasures)
       val selfRepetitionA = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForA))
       val selfRepetitionB = toCSVSelfRepetition(DialogueLexiconMeasures(lexiconForB))
 
-      val speakerDependantMeasures = CSVUtils.join(speakerDependantMeasuresOtherRepetition,
-                                                   CSVUtils.join(selfRepetitionA, selfRepetitionB))
+      val (speakerARepr, speakerBRepr) = lexicon.rawSpeakers()
+      val speakers = CSVUtils.mkCSV(List(speakerARepr, speakerBRepr))
+      val speakerDependantMeasures = List(speakers,
+                                          speakerDependantMeasuresOtherRepetition,
+                                          selfRepetitionA, selfRepetitionB).reduceLeft(CSVUtils.join)
 
       (speakerIndependantMeasures, speakerDependantMeasures)
     }

@@ -169,7 +169,7 @@ object LexiconExporterApp extends LazyLogging {
             for (d@Dialogue(dialogueName, utterances, getRawSpeaker) <- dialogues)
               yield {
                 logger.debug(s"Building dialogue lexicon for dialogue: $dialogueName")
-                DialogueLexiconBuilder(utterances, d.getSpeaker, lexiconMode)
+                DialogueLexiconBuilder(utterances, d.getSpeaker, d.getRawSpeaker, lexiconMode)
               }
 
           val corpusLexicon = CorpusLexicon.aggregate(dialogueLexicons)

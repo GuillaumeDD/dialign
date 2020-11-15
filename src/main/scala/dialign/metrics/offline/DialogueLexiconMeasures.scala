@@ -317,6 +317,7 @@ object DialogueLexiconMeasures {
   object speakerDependant {
     val headingToCSV: String = {
       val heading = List("ID",
+        "S1", "S2",
         "S1/Initiated Expression (IE_S1)", "S1/Expression Repetition (ER_S1)", "S1/tokens (%)",
         "S2/Initiated Expression (IE_S2)", "S2/Expression Repetition (ER_S2)", "S2/tokens (%)",
 

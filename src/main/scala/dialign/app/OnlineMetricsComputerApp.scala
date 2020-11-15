@@ -113,6 +113,7 @@ object OnlineMetricsComputerApp extends LazyLogging {
 
           val utterances = dialogue.lines
           val turn2speaker = dialogue.turn2speaker _
+          val speaker2str = dialogue.getRawSpeaker _
 
           var currentNumTokens = 0
 
@@ -132,7 +133,7 @@ object OnlineMetricsComputerApp extends LazyLogging {
             // Computing metrics
             val selfRepetitionLexicon = DialogueLexiconBuilder(
               currentUtterancesFor(lastSpeaker).toIndexedSeq,
-              turn2speaker,
+              turn2speaker, speaker2str,
               ExpressionType.OWN_REPETITION_ONLY)
 
             val lexicon = DialogueLexiconBuilder(currentUtterances.toIndexedSeq, turn2speaker)
@@ -187,6 +188,7 @@ object OnlineMetricsComputerApp extends LazyLogging {
   case class PreprocessedDialogue(name: String,
                                   lines: Array[PreprocessedLine],
                                   turn2rawSpeaker: Int => String) {
+    // TODO check the utility of this code wrt DialogueReader.scala
 
     val rawSpeakers =
       (for (i <- 0 until lines.length)
@@ -195,21 +197,44 @@ object OnlineMetricsComputerApp extends LazyLogging {
         .distinct
     assert(rawSpeakers.size <= 2, s"Dialogue with more than 2 speakers: ${rawSpeakers.mkString(", ")}")
 
-    protected val rawSpeakers2Speaker = {
+    /**
+      * First speaker in this dialogue (aka 'A')
+      */
+    val firstSpeaker = rawSpeakers.head
+    /**
+      * Second speaker in this dialogue (aka 'B'
+      */
+    val secondSpeaker = if (rawSpeakers.size == 2) {
+      rawSpeakers.tail.head
+    } else {
+      "NS"
+    }
+
+    protected val (rawSpeakers2Speaker, speaker2string) = {
       if (rawSpeakers.isEmpty) {
-        Map.empty[String, Speaker]
+        (Map.empty[String, Speaker], Map.empty[Speaker, String])
       } else if (rawSpeakers.size == 1) {
-        Map(rawSpeakers.head -> Speaker.A)
+        (Map(firstSpeaker -> Speaker.A), Map(Speaker.A -> firstSpeaker))
       } else {
-        Map(
-          rawSpeakers.head -> Speaker.A,
-          rawSpeakers.tail.head -> Speaker.B
+        ( // String -> Speaker
+          Map(
+            firstSpeaker -> Speaker.A,
+            secondSpeaker -> Speaker.B
+          ),
+          // Speaker -> String
+          Map(
+            Speaker.A -> firstSpeaker,
+            Speaker.B -> secondSpeaker
+          )
         )
       }
     }
 
     def turn2speaker(index: Int): Speaker =
       rawSpeakers2Speaker(turn2rawSpeaker(index))
+
+    def getRawSpeaker(speaker: Speaker): String =
+      speaker2string(speaker)
   }
 
   private def speakerNormalisation(speaker: String): String = {
