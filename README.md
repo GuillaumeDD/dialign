@@ -183,7 +183,7 @@ java -jar dialign.jar -h
 
 ## Contributors ##
 
-- Guillaume Dubuisson Duplessis (2017, 2018, 2019, 2020)
+- Guillaume Dubuisson Duplessis (2017, 2020)
 
 ## Usage for Research Purposes ##
 
@@ -198,7 +198,7 @@ using this code! Please, do not hesitate to contact us:
 - F. Landragin <[website](http://fred.landragin.free.fr/)>
 
 ## References ##
-- [0] Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+- [0] Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
 - [1] Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
                                                                          Interactions based on Measures of Lexical
                                                                          Repetitions**, TODO, 2020, pp. XX-XX \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
