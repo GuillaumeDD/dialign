@@ -20,7 +20,7 @@ lexicon  of   fixed  expressions.   As   a  matter  of   fact,  dialogue
 participants tend  to automatically establish and  use fixed expressions
 that become dialogue routines.
 More concretely, here follows an excerpt of a dialogue between a human and an
-agent operated by a Woz where instances of shared lexical patterns are coloured:
+agent operated by a Woz where instances of shared lexical patterns are coloured (from [[1]](#references)):
 ![Excerpt of a dialogue between a human and an agent where instances of shared expressions are coloured.](./doc/img/example-dialogue.png)
 
 
@@ -46,11 +46,8 @@ linguistic production of a given DP.
 
 The main concept behind our model is the automatically built lexicon. For each
 dialogue transcript, three lexicons are automatically computed:
-- the shared expression lexicon: keeps  track of shared  expressions and valuable  
-                                 features about these  expressions  (e.g.,  who  first
-                                 produced  this  expression,  its frequency)
-- one self-repetition lexicon per DP: keeps  track of self-repetitions and valuable  
-                                      features about these  patterns  (e.g., its frequency)
+- the shared expression lexicon: keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
+- one self-repetition lexicon per DP: keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
 
 Lexicons and the dialogue transcript are leveraged by deriving offline and
 online measures to quantify aspects of the verbal alignment process and the
@@ -152,9 +149,13 @@ The JAR file can be probably found in the directory `dialign/target/scala-2.13/`
 
 ## Usage ##
 
-`dialign` is developed to be **easy to use**.
+`dialign` is designed to be **easy to use** from the command line interface.
 
-### Usage Example ###
+### Tutorial
+A complete **walkthrough tutorial** is available in the 
+[examples/ directory](examples/README.md). 
+
+### CLI Usage Example ###
 
 Let's  say  that   the  dialogue  files  are  in   the  input  directory
 `input-directory/`  and   that  output  is  planned   in  the  directory
@@ -180,38 +181,6 @@ More options are available, see usage note:
 java -jar dialign.jar -h
 ```
 
-### Before Using dialign on Your Data: Dialogue Formatting ###
-
-The dialogue format used by `dialign` is the `tsv` format (tabulation-separated values)
-with the first column being the speaker and the second column being the utterance.
-
-Before using `dialign` on your data, make sure that dialogues are correctly formatted to be 
-processed by `dialign`.
-- Each dialogue file should contain one and only one dialogue.
-- When computing verbal alignment measures  for an entire corpus, make
-  sure that the  locutor names are normalized  between dialogues (for
-  instance, that  the system is  always referred  to as "S"  and the
-  user as "U").
-
-Importantly, each utterance should be already:
-- tokenized (a space must separate tokens)
-- normalized (each token must be normalized, e.g. regarding lower/uppercase)
-
-Each line in the dialogue file should comply to the following format:
-```text
-LOCUTOR:\tTOKENIZED UTTERANCE\n
-```
-where:
-- `LOCUTOR`: the unique identifier of the locutor
-- `TOKENIZED UTTERANCE`: the (already) tokenized and normalized utterance 
-
-E.g., it should look like:
-```text
-Alice:	hello ! how are you today ?
-Bob:	hello Alice ! I'm fine , how are you ?
-Alice:	I'm fine , thank you !
-```
-
 ## Contributors ##
 
 - Guillaume Dubuisson Duplessis (2017, 2018, 2019, 2020)
@@ -220,13 +189,20 @@ Alice:	I'm fine , thank you !
 
 If you use this software for  research purposes, please make reference to
 it by citing the following paper:
-- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
 
 The authors  of this work would  be happy to  hear about you if  you are
 using this code! Please, do not hesitate to contact us:
 - G. Dubuisson Duplessis <[website](http://www.dubuissonduplessis.fr/contact.html)>
 - C. Clavel <[website](https://clavel.wp.imt.fr/)>
 - F. Landragin <[website](http://fred.landragin.free.fr/)>
+
+## References ##
+- [0] Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+- [1] Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
+                                                                         Interactions based on Measures of Lexical
+                                                                         Repetitions**, TODO, 2020, pp. XX-XX \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+
 
 ## License ##
 
