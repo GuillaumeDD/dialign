@@ -309,7 +309,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
     }
 
     def outputLexicon(): Unit = {
-      val filename_lexicon = s"$outputDir/$dialogueID-lexicon.csv"
+      val filename_lexicon = s"$outputDir/$dialogueID-lexicon.tsv"
       logger.info(s"Outputing dialogue lexicon in $filename_lexicon (for dialogue: $dialogueID)")
 
       IO.withFile(filename_lexicon) {
@@ -320,7 +320,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
     def outputSelfRepetitionLexicon(): Unit = {
       // Self-repetition lexicon for A
-      val filename_lexicon_A = s"$outputDir/$dialogueID-lexicon-self-rep-A.csv"
+      val filename_lexicon_A = s"$outputDir/$dialogueID-lexicon-self-rep-A.tsv"
       logger.info(s"Outputing self-repetition dialogue lexicon for speaker A in $filename_lexicon_A (for dialogue: $dialogueID)")
 
       IO.withFile(filename_lexicon_A) {
@@ -329,7 +329,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
       }
 
       // Self-repetition lexicon for B
-      val filename_lexicon_B = s"$outputDir/$dialogueID-lexicon-self-rep-B.csv"
+      val filename_lexicon_B = s"$outputDir/$dialogueID-lexicon-self-rep-B.tsv"
       logger.info(s"Outputing self-repetition dialogue lexicon for speaker B in $filename_lexicon_B (for dialogue: $dialogueID)")
 
       IO.withFile(filename_lexicon_B) {
