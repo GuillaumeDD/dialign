@@ -1,13 +1,13 @@
 # Tutorial to use dialign
 
 In this tutorial, you will:
-- learn how to format your dialogue transcripts in `tsv` format ;
-- learn how to run `dialign` on a single dialogue transcript (generalisation to a 
+- learn [how to format your dialogue transcripts in `tsv` format](#input-data-dialogue-transcripts) ;
+- learn [how to run `dialign` on a single dialogue transcript](#running-dialign) (generalisation to a 
   full corpus is straightforward) ; and
 - understand the output files of `dialign` where you can find 
-   + the measures provided by `dialign` for the full corpus in `tsv` format,
-   + the shared expression lexicon in `tsv` format for each dialogue transcript, and
-   + the self-repetition lexicons in `tsv` format for each dialogue transcript.
+   + [the measures provided by `dialign` for the full corpus in `tsv` format](#output-files-at-the-level-of-the-corpus),
+   + [the shared expression lexicon in `tsv` format for each dialogue transcript](#the-shared-expression-lexicon), and
+   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](#the-self-expression-lexicons).
 
 ## Input Data: Dialogue Transcripts
 
