@@ -35,7 +35,7 @@ alignment process, a particular type of on-the-fly linguistic adaptation. They
 can be seen as shared dialogue routines at the lexical level. They are a way
 to verbally align and ultimately share a common language to improve understanding, 
 collaboration and social connection to a conversational partner. 
-The second type is lexical self -repetition. Contrary to the previous type which considers 
+The second type is lexical self-repetition. Contrary to the previous type which considers 
 patterns that are shared between DPs, self-repetition considers each DP
 in isolation. Self-repetitions are lexical patterns appearing at least twice
 in the dialogue utterances of a given DP, independently of the other DP's
@@ -44,10 +44,10 @@ linguistic production of a given DP.
 
 ![Idea of the framework: automatic building of the shared expression lexicon to derive verbal alignment measures](./doc/img/framework.png)
 
-The main concept behind our model is the automatically built lexicon. For each
+The main concept behind this model is the automatically built lexicon. For each
 dialogue transcript, three lexicons are automatically computed:
-- the shared expression lexicon: keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
-- one self-repetition lexicon per DP: keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
+- [the shared expression lexicon](examples#the-shared-expression-lexicon): keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
+- [one self-repetition lexicon per DP](examples#the-self-repetition-lexicons): keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
 
 Lexicons and the dialogue transcript are leveraged by deriving offline and
 online measures to quantify aspects of the verbal alignment process and the
@@ -67,7 +67,7 @@ Online usage in a dialogue system is under way and not yet available.
 These measures allow the characterisation of the nature of these processes by addressing 
 various informative aspects such as their variety, strength, complexity, stability, and 
 orientation. In a nutshell:
-- **variety**: the variety of shared expressions or self-expressions emerging during a dialogue 
+- **variety**: the variety of shared expressions or self-repetitions emerging during a dialogue 
                relative to its length. It is directly related to the number of unique 
                expressions in a lexicon. 
 - **strength**: the strength of repetition of the (shared) lexical patterns, i.e., how much the

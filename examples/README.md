@@ -7,7 +7,7 @@ In this tutorial, you will:
 - understand the output files of `dialign` where you can find 
    + [the measures provided by `dialign` for the full corpus in `tsv` format](#output-files-at-the-level-of-the-corpus),
    + [the shared expression lexicon in `tsv` format for each dialogue transcript](#the-shared-expression-lexicon), and
-   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](#the-self-expression-lexicons).
+   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](#the-self-repetition-lexicons).
 
 ## Input Data: Dialogue Transcripts
 
@@ -136,16 +136,16 @@ This file includes  the  following columns:
    - `Voc. Overlap S1`: relative shared vocabulary by S1
    - `Voc. Overlap S2`: relative shared vocabulary by S2
 - Measures related to the self-repetition behaviour
-   - `SR/S1/ELS`: the number of items in the self-expression lexicon for `S1`
+   - `SR/S1/ELS`: the number of items in the self-repetition lexicon for `S1`
    - `SR/S1/EV`: Self-Expression Variety (SEV) for `S1`
    - `SR/S1/ER`: Self-Expression Repetition (SER) for `S1`
-   - `SR/S1/ENTR`: complexity of the self-expression repetitions for `S1`
+   - `SR/S1/ENTR`: complexity of the self-repetitions for `S1`
    - `SR/S1/L`: average length in tokens of the self-repetitions for `S1`
    - `SR/S1/LMAX`: maximum length in token of the self-repetitions for `S1`
-   - `SR/S2/ELS`: the number of items in the self-expression lexicon for `S2`
+   - `SR/S2/ELS`: the number of items in the self-repetition lexicon for `S2`
    - `SR/S2/EV`: Self-Expression Variety (SEV) for `S2`
    - `SR/S2/ER`: Self-Expression Repetition (SER) for `S2`
-   - `SR/S2/ENTR`: complexity of the self-expression repetitions for `S2`
+   - `SR/S2/ENTR`: complexity of the self-repetitions for `S2`
    - `SR/S2/L`: average length in tokens of the self-repetitions for `S2`
    - `SR/S2/LMAX`: maximum length in token of the self-repetitions for `S2`
 
@@ -156,7 +156,7 @@ For each dialogue transcript in the corpus (here: `excerpt-alice.tsv`), `dialign
 [excerpt-alice_tsv-dialogue.txt](output-dialign/excerpt-alice_tsv-dialogue.txt);
 - the shared expression lexicon, here: 
 [excerpt-alice_tsv-lexicon.tsv](output-dialign/excerpt-alice_tsv-lexicon.tsv);
-- for each speaker, the self-expression lexicon, here:
+- for each speaker, the self-repetition lexicon, here:
    + for S1: [excerpt-alice_tsv-lexicon-self-rep-A.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-A.tsv) ; and
    + for S2: [excerpt-alice_tsv-lexicon-self-rep-B.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-B.tsv).
 
@@ -214,8 +214,8 @@ This `tsv` file contains the following columns:
 - `First Speaker`: the initiator of the expression
 - `Turns`: the turns in which the expression appears
 
-#### The Self-Expression Lexicons
-The self-expression lexicons provide a detailed view of the self-expressions for each
+#### The Self-Repetition Lexicons
+The self-repetition lexicons provide a detailed view of the self-repetitions for each
 dialogue participant in `tsv` format. Here, they are available:
 + for S1 in [excerpt-alice_tsv-lexicon-self-rep-A.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-A.tsv) ; and
 + for S2 in [excerpt-alice_tsv-lexicon-self-rep-B.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-B.tsv).
