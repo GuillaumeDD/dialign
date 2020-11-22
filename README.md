@@ -163,7 +163,7 @@ In this tutorial, you will:
 - understand the output files of `dialign` where you can find 
    + [the measures provided by `dialign` for the full corpus in `tsv` format](examples#output-files-at-the-level-of-the-corpus),
    + [the shared expression lexicon in `tsv` format for each dialogue transcript](examples#the-shared-expression-lexicon), and
-   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](examples#the-self-expression-lexicons).
+   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](examples#the-self-repetition-lexicons).
 
 
 ### CLI Usage Example ###
