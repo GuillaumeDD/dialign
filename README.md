@@ -1,6 +1,6 @@
 # dialign #
 
-Latest version: 0.1.1 (alpha)
+Latest version: 0.2.0 (alpha)
 
 dialign is  a software that  provides automatic and generic  measures of
 verbal alignment and self-repetitions in  dyadic dialogue based on  sequential 
@@ -85,7 +85,7 @@ orientation. In a nutshell:
                                    more extended the patterns are, the more stable the processes are.
 - **orientation**: the orientation of the interactive alignment process, i.e., it indicates either a symmetry 
                    (both dialogue participants initiate and reuse the same number of shared lexical patterns),
-                   or an asymmetry (a dialogue participant initiates and/or reuse more shared lexical patterns).
+                   or an asymmetry (a dialogue participant initiates and/or reuses more shared lexical patterns).
 
 ### Measures Characterising the Interactive Verbal Alignment Process
 #### Speaker-independent
@@ -113,7 +113,7 @@ orientation. In a nutshell:
 | SL_S       |  Average length in tokens of the self-repetitions from S. | Stability |
 | SLMAX_S    |  Maximum length in token of the self-repetitions from S. | Stability |
 
-### Synthetic Presentation of the provided Measures
+### Synthetic Presentation of the Provided Measures
 | Aspect      | Speaker-independent Measures (*) | Speaker-dependent Measures (**) |
 | :---:       | :---:                            | :---:                           |
 | Variety     | EV                               |  SEV_S                          | 

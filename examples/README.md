@@ -220,6 +220,9 @@ dialogue participant in `tsv` format. Here, they are available:
 + for S1 in [excerpt-alice_tsv-lexicon-self-rep-A.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-A.tsv) ; and
 + for S2 in [excerpt-alice_tsv-lexicon-self-rep-B.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-B.tsv).
 
+The column definitions are the same as the ones for 
+[the shared expression lexicon](examples#the-shared-expression-lexicon).
+
 The content of `excerpt-alice_tsv-lexicon-self-rep-A.tsv` is reproduced below:
 ```tsv
 Freq.	Size	Surface Form	Spanning	First Speaker	Turns
