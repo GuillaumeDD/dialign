@@ -11,6 +11,7 @@ A good place to start can be found in the following paper:
   **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 
   \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
 
+## Framework
 `dialign`  is based  on the  observation that  the behaviours  of dialogue
 participants tend to converge and  automatically align at several levels
 (such as the lexical, syntactic  and semantic ones).  One consequence of
@@ -86,8 +87,8 @@ orientation. In a nutshell:
                    (both dialogue participants initiate and reuse the same number of shared lexical patterns),
                    or an asymmetry (a dialogue participant initiates and/or reuse more shared lexical patterns).
 
-#### Measures Characterising the Interactive Verbal Alignment Process
-##### Speaker-independent
+### Measures Characterising the Interactive Verbal Alignment Process
+#### Speaker-independent
 | Measure | Description |  Aspects |
 | :---:   | :---       |  :---:   |
 |  EV     |  Expression Variety (EV). The shared expression lexicon size normalized by the length of the dialogue (which is its total number of tokens in the dialogue).  | Variety | 
@@ -96,14 +97,14 @@ orientation. In a nutshell:
 | L       | Average length in token of the shared expression instances. | Stability |
 | LMAX    | Maximum length in token of the shared expression instances. | Stability |
 
-##### Speaker-dependent
+#### Speaker-dependent
 
 | Measure | Description |  Aspects |
 | :---:   | :---       |  :---:   |
 |  IE_S     |  Initiated Expression (IE) for locutor S. Ratio of shared expressions initiated by locutor S.   | Orientation | 
 |  ER_S     |  Expression Repetition (ER) for locutor S. Ratio of tokens produced by S belonging to an instance of a shared expression.  | Strength |
 
-#### Measures Characterising Self-Repetition Behaviour of each Dialogue Participant
+### Measures Characterising Self-Repetition Behaviour of each Dialogue Participant
 | Measure | Description |  Aspects |
 | :---:   | :---       |  :---:   |
 |  SEV_S  |  Self-Expression Variety (SEV) for locutor S. For locutor S, the self-repetition lexicon size normalized by the total number of tokens produced by S in the dialogue.  | Variety | 
