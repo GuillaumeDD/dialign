@@ -153,7 +153,17 @@ The JAR file can be probably found in the directory `dialign/target/scala-2.13/`
 
 ### Tutorial
 A complete **walkthrough tutorial** is available in the 
-[examples/ directory](examples/README.md). 
+[examples/ directory](examples/). 
+
+In this tutorial, you will:
+- learn [how to format your dialogue transcripts in `tsv` format](examples#input-data-dialogue-transcripts) ;
+- learn [how to run `dialign` on a single dialogue transcript](examples#running-dialign) (generalisation to a 
+  full corpus is straightforward) ; and
+- understand the output files of `dialign` where you can find 
+   + [the measures provided by `dialign` for the full corpus in `tsv` format](examples#output-files-at-the-level-of-the-corpus),
+   + [the shared expression lexicon in `tsv` format for each dialogue transcript](examples#the-shared-expression-lexicon), and
+   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](examples#the-self-expression-lexicons).
+
 
 ### CLI Usage Example ###
 

@@ -14,7 +14,7 @@ In this tutorial, you will:
 In this tutorial, the input corpus is located in the [corpus/ directory](corpus/). It contains
 a single transcript "[excerpt-alice.tsv](corpus/excerpt-alice.tsv)" which content is reproduced
 below:
-```text
+```tsv
 Human:	okay well but the books like  there are many eh facts in the book which are against the law of physics like the piece of cake which is which makes eh Alice bigger or smaller i don't remember but which
 Agent:	indeed
 Human:	yeah eh does the piece of cake makes Alice bigger or smaller ?
@@ -54,14 +54,14 @@ Importantly, each utterance should be already:
 
 ## Running dialign
 
-In this tutorial, the input corpus is the `corpus/` directory. Let's we want `dialign`
+In this tutorial, the input corpus is the `corpus/` directory. Let's say we want `dialign`
 to output the results in the `output-dialign/` directory. To this end, simply run `dialign`
 as follows:
 ```bash
 java -jar dialign.jar -i corpus/ -o output-dialign/
 ```
 
-Note: to run dialign on a corpus containing multiple dialogue transcript, you simply need 
+Note: to run dialign on a corpus containing multiple dialogue transcripts, you simply need 
 to put the dialogue transcripts in the input directory (here `corpus/`).
 
 ## Output Data: Description of dialign Output Files
@@ -69,8 +69,8 @@ to put the dialogue transcripts in the input directory (here `corpus/`).
 `dialign` outputs several files as can be seen in the 
 [output-dialign/ directory](output-dialign/). Output files can be divided into
 two parts:
-1. measures for the entire corpus, and
-1. the lexicons for each dialogue transcript.
+1. [measures for the entire corpus](#output-files-at-the-level-of-the-corpus), and
+1. [the lexicons for each dialogue transcript](#output-files-for-each-dialogue-transcript).
 
 ### Output Files at the Level of the Corpus
 Output files at the level of the corpus can ben broken down into:
@@ -85,12 +85,12 @@ Speaker-independent measures --which are related to the interactive verbal align
 process-- are available in the file named 
 [metrics-speaker-independent.tsv](output-dialign/metrics-speaker-independent.tsv)
 which content is reproduced below:
-```text
+```tsv
 ID	Num. utterances	Num. tokens	Expression Lexicon Size (ELS)	Expression Variety (EV)	Expression Repetition (ER)	Voc. Overlap	ENTR	L	LMAX
 excerpt-alice_tsv	10.0	105.0	11.0	0.10476190476190476	0.2	0.28	1.7566238110793635	1.88	4.0
 ```
 
-This file include  the  following columns:
+This file includes  the  following columns:
 - `ID`: unique ID of the dialogue file
 - `Num. utterances`: number of utterances in the dialogue
 - `Num. tokens`: total number of tokens in the dialogue
@@ -115,7 +115,7 @@ ID	S1	S2	S1/Initiated Expression (IE_S1)	S1/Expression Repetition (ER_S1)	S1/tok
 excerpt-alice_tsv	Agent	Human	0.18181818181818182	0.53125	0.3047619047619048	0.8181818181818182	0.0547945205479452	0.6952380952380952	0.5833333333333334	0.35	3.0	0.08108108108108109	0.40540540540540543	0.9709505944546686	3.0	6.0	12.0	0.15384615384615385	0.5256410256410257	1.7814164026211206	2.0	4.0
 ```
 
-This file include  the  following columns:
+This file includes  the  following columns:
 - `ID`: unique ID of the dialogue file
 - `S1`: speaker referred to as `S1`
 - `S2`: speaker referred to as `S2`
@@ -188,7 +188,7 @@ The shared expression lexicon provides a detailed view of the shared expressions
 in `tsv` format.
 The content of [excerpt-alice_tsv-lexicon.tsv](output-dialign/excerpt-alice_tsv-lexicon.tsv), 
 is reproduced below:
-```text
+```tsv
 Freq.	Free Freq.	Size	Surface Form	Establishment turn	Spanning	Priming	First Speaker	Turns
 3	3	4	the piece of cake	3	4	2	Human	0, 2, 3
 3	3	3	there are many	7	10	1	Human	0, 7, 9
@@ -221,7 +221,7 @@ dialogue participant in `tsv` format. Here, they are available:
 + for S2 in [excerpt-alice_tsv-lexicon-self-rep-B.tsv](output-dialign/excerpt-alice_tsv-lexicon-self-rep-B.tsv).
 
 The content of `excerpt-alice_tsv-lexicon-self-rep-A.tsv` is reproduced below:
-```text
+```tsv
 Freq.	Size	Surface Form	Spanning	First Speaker	Turns
 2	6	throughout the book there are many	3	Agent	7, 9
 3	1	the	7	Agent	3, 7, 9
@@ -229,7 +229,7 @@ Freq.	Size	Surface Form	Spanning	First Speaker	Turns
 ```
 
 The content of `excerpt-alice_tsv-lexicon-self-rep-B.tsv` is reproduced below:
-```text
+```tsv
 Freq.	Size	Surface Form	Spanning	First Speaker	Turns
 2	4	Alice bigger or smaller	3	Human	0, 2
 2	4	the piece of cake	3	Human	0, 2
@@ -244,3 +244,6 @@ Freq.	Size	Surface Form	Spanning	First Speaker	Turns
 2	1	okay	5	Human	0, 4
 2	1	the	3	Human	0, 2
 ```
+
+## That's all folks!
+You know everything you need to know to use `dialign` for corpus studies! :-)
