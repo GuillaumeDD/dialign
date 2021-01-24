@@ -42,7 +42,12 @@ import dialign.DialogueLexicon
 
 case class LexiconBasedMeasures(lexicon: DialogueLexicon) {
 
-  private val lastTurnID = lexicon.turns.size - 1
+  import lexicon._
+
+  private val lastTurnID = turns.size - 1
+  private val lastTurn = turns(lastTurnID)
+  val sharedExpressions =  lastTurn.allExpressions.filter(_.turns().size > 0)
+  val establishedSharedExpressions = expressions.filter(_.establishementTurnID() == lastTurnID)
 
   /**
     * The expression expression measure of the last turn of the dialogue, i.e.
@@ -56,14 +61,10 @@ case class LexiconBasedMeasures(lexicon: DialogueLexicon) {
       0.0d
     }
 
-
   /**
     * A measure of the contribution to the lexicon of the last turn of the dialogue, i.e.
     * the number of established expression in the last turn
     *
     */
-  val lexiconContribution = {
-    import lexicon._
-    expressions.count(_.establishementTurnID() == lastTurnID)
-  }
+  val lexiconContribution = expressions.count(_.establishementTurnID() == lastTurnID)
 }
