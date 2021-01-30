@@ -42,8 +42,9 @@ sealed abstract class DialogueHistory {
 }
 
 object DialogueHistory {
-  def apply(utterances: IndexedSeq[Utterance] = IndexedSeq.empty[Utterance]): DialogueHistory =
-    new DialogueHistory() {
+  def apply(utterances: IndexedSeq[Utterance] = IndexedSeq.empty[Utterance]): DialogueHistory = {
+    // Creation and implemenation of the dialogue history
+    val result = new DialogueHistory() {
       protected val utterances = scala.collection.mutable.Buffer[Utterance]()
 
       /**
@@ -73,7 +74,7 @@ object DialogueHistory {
         // Addition to a temporary dialogue history the utterance to score
         val currentUtterances = this.utterances.toIndexedSeq :+ lastUtterance
         // Tokenization of utterances
-        val tokenizedUtterances = currentUtterances.map(utt => Tokenizer.tokenizeWithoutMarkers(utt.utterance))
+        val tokenizedUtterances = currentUtterances.map(utt => Tokenizer.tokenizeWithoutMarkers(utt.text))
 
         // Building of the lexicon
         // 1- Building the transcoding from locutor to {A, B}
@@ -83,7 +84,7 @@ object DialogueHistory {
           (for ((locutor, index) <- locutors.zipWithIndex)
             yield ((locutor, if (index % 2 == 0) Speaker.A else Speaker.B))).toMap
 
-        val speaker2string = (for((speaker, locutor) <- locutor2speaker) yield (locutor, speaker)).toMap
+        val speaker2string = (for ((speaker, locutor) <- locutor2speaker) yield (locutor, speaker)).toMap
 
         // 2- Building the link between utterance ID and locutor
         val turn2speaker =
@@ -101,9 +102,9 @@ object DialogueHistory {
           (tokenizedUtterance, index) <- tokenizedUtterances.zipWithIndex
           speaker = turn2speaker(index)
         } yield {
-          if(speaker == lastSpeaker){
+          if (speaker == lastSpeaker) {
             tokenizedUtterance
-          } else{
+          } else {
             TokenizedUtterance.empty
           }
         }
@@ -147,4 +148,12 @@ object DialogueHistory {
       override def locutors(): IndexedSeq[String] = locutorsHelper(history())
 
     }
+
+    // Addition of the provided utterances
+    for(utterance <- utterances) {
+      result.addUtterance(utterance)
+    }
+
+    result
+  }
 }

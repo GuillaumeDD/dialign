@@ -1,9 +1,10 @@
 package dialign.online
 
-import Console.{BOLD, GREEN, RED, RESET, YELLOW_B}
+import Console.{BOLD, GREEN, RED, RESET}
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
+import dialign.IO.DialogueReader.Dialogue
 import dialign.{CSVUtils, Expression}
 
 import scala.io.StdIn
@@ -11,13 +12,14 @@ import scala.io.StdIn
 object DialignOnlineApp extends LazyLogging {
 
   case class Config(history: Option[File] = None,
-                    verbose: Boolean = false
-                   )
+                    output: Option[File] = None,
+                    verbose: Boolean = false)
 
   val parser = new scopt.OptionParser[Config]("dialign-online") {
     head("dialign-online", "2021.01")
+    // TODO license & co
 
-    opt[File]('h', "history").optional().valueName("<file>").
+    opt[File]('f', "file").optional().valueName("<file>").
       validate(filename =>
         if (filename.isFile)
           success
@@ -25,6 +27,21 @@ object DialignOnlineApp extends LazyLogging {
           failure("History must be a file!")).
       action((x, c) => c.copy(history = Some(x))).
       text("dialogue history file")
+
+    opt[File]('o', "output").optional().valueName("<file>").
+      validate(filename =>
+        if (filename.exists()) {
+          if (filename.canWrite){
+            success
+          } else {
+            failure("Output file exists but cannot be written. Check the write permission.")
+          }
+        } else {
+          success
+        }
+      ).
+      action((x, c) => c.copy(output = Some(x))).
+      text("output file to export online measures (deactivate the interactive mode)")
 
     opt[Unit]('v', "verbose").action((_, c) => c.copy(verbose = true)).
       text("display logs on console")
@@ -38,22 +55,25 @@ object DialignOnlineApp extends LazyLogging {
           case None =>
             IndexedSeq.empty[Utterance]
           case Some(file) =>
-            // TODO
-            IndexedSeq.empty[Utterance]
+            IO.loadFile(file)
         }
 
         val dialogueHistory = DialogueHistory(utterances)
 
-        // Running the iteractive loop
-        interactiveRun(dialogueHistory)
+        config.output match {
+          case None =>
+            // Running the iteractive loop
+            interactiveRun(dialogueHistory)
+
+          case Some(outputFile) =>
+            IO.exportDialogueHistory(dialogueHistory, outputFile, verbose = config.verbose)
+        }
 
       case None =>
       // arguments are bad, error message will have been displayed
 
     }
   }
-
-
 
   def interactiveRun(dialogueHistory: DialogueHistory): Unit = {
     /*
@@ -110,7 +130,6 @@ object DialignOnlineApp extends LazyLogging {
         case 'e' =>
           val file = IO.readFilepath()
           IO.exportDialogueHistory(dialogueHistory, file)
-        // TODO: export dialogue
 
         case 's' =>
           // Obtain utterance
@@ -150,9 +169,9 @@ object IO {
       try {
         m = StdIn.readChar().toLower
       } catch {
-        case e: java.lang.StringIndexOutOfBoundsException =>
+        case _: java.lang.StringIndexOutOfBoundsException =>
           m = '?'
-        case e: java.io.EOFException =>
+        case _: java.io.EOFException =>
           m = '?'
       }
     } while (!isValidMode(m))
@@ -217,9 +236,9 @@ object IO {
       try {
         answer = StdIn.readChar().toLower
       } catch {
-        case e: java.lang.StringIndexOutOfBoundsException =>
+        case _: java.lang.StringIndexOutOfBoundsException =>
           answer = if(defaultYes) 'y' else 'n'
-        case e: java.io.EOFException =>
+        case _: java.io.EOFException =>
           answer = if(defaultYes) 'y' else 'n'
       }
     } while(answer != 'y' && answer != 'n')
@@ -255,12 +274,12 @@ object IO {
     def expressionToString(expr: Expression): String =
       f"'${expr.content.mkString(" ")}'"
 
-    val Utterance(locutor, utterance) = result.utterance
+    val Utterance(locutor, text) = result.utterance
     val der = result.der
     val dser = result.dser
     Console.println(
       f"""Utterance:
-         |${RESET}${BOLD}${Console.RED}$locutor${RESET}: ${utterance}${RESET}""".stripMargin)
+         |${RESET}${BOLD}${Console.RED}$locutor${RESET}: ${text}${RESET}""".stripMargin)
     Console.println(
       f"""Verbal alignment
          | - DER: $der%.2f
@@ -273,11 +292,13 @@ object IO {
          |""".stripMargin)
   }
 
-  def exportDialogueHistory(history: DialogueHistory, file: File): Unit = {
+  def exportDialogueHistory(history: DialogueHistory, file: File, verbose: Boolean = true): Unit = {
     def expressionToString(expr: Expression): String =
       f"${expr.content.mkString(" ")}"
 
-    Console.println(f"Exporting history in: ${file.getAbsolutePath}")
+    if(verbose)
+      Console.println(f"Exporting history in: ${file.getAbsolutePath}")
+
     // Incrementally built history of the export
     val exportHistory = DialogueHistory()
 
@@ -290,14 +311,14 @@ object IO {
         )
         writer.println(CSVUtils.mkCSV(heading))
 
-        for(u @ Utterance(locutor, utterance) <- history.history()){
+        for(u @ Utterance(locutor, text) <- history.history()){
           // Scoring of the new utterance
           val result = exportHistory.score(u)
 
           // Saving the result of the scoring
           val newLine = List(
             locutor,
-            utterance,
+            text,
             // Verbal alignment
             f"${result.der}",
             result.sharedExpressions.map(expressionToString).mkString("\n"),
@@ -312,5 +333,16 @@ object IO {
           exportHistory.addUtterance(u)
         }
     }
+  }
+
+  def loadFile(file: File): IndexedSeq[Utterance] = {
+    def dialogueToUtterances(dialogue: Dialogue): IndexedSeq[Utterance] = {
+      for((utterance, index) <- dialogue.utterances.zipWithIndex)
+        yield(Utterance(dialogue.turn2rawSpeaker(index), utterance.mkString(" ")))
+    }
+
+    val dialogue = dialign.IO.DialogueReader.load(file,  tokenize = dialign.nlp.Tokenizer.tokenizeWithoutMarkers)
+
+    dialogueToUtterances(dialogue)
   }
 }
