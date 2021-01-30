@@ -4,9 +4,7 @@ import dialign.DialogueLexiconBuilder.ExpressionType
 import dialign.metrics.online.{LexiconBasedMeasures, SelfRepetitionMeasures}
 import dialign.nlp.Tokenizer
 import dialign.nlp.Tokenizer.TokenizedUtterance
-import dialign.{DialogueLexiconBuilder, Expression, Speaker}
-
-case class Utterance(locutor: String, utterance: String)
+import dialign.{DialogueLexiconBuilder, Speaker}
 
 sealed abstract class DialogueHistory {
 
@@ -29,23 +27,6 @@ sealed abstract class DialogueHistory {
     * @param utt utterance to add
     */
   def addUtterance(utt: Utterance): Unit
-
-  /**
-    * Scoring results for a specific utterance
-    *
-    * @param utterance                    the scored utterance
-    * @param der                          dynamic shared expression repetition
-    * @param dser                         dynamic self-expression repetitions
-    * @param sharedExpressions            the shared expressions present in the utterance
-    * @param establishedSharedExpressions the established shared expressions by this utterance
-    * @param selfExpressions              the self-expressions present in the utterance
-    */
-  case class UtteranceScoring(utterance: Utterance,
-                              der: Double,
-                              dser: Double,
-                              sharedExpressions: Set[Expression],
-                              establishedSharedExpressions: Set[Expression],
-                              selfExpressions: Set[Expression])
 
   /**
     * Scores an utterance given the current dialogue history
