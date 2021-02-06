@@ -154,7 +154,7 @@ The JAR file can be probably found in the directory `dialign/target/scala-2.13/`
 
 ### Tutorial
 A complete **walkthrough tutorial** is available in the 
-[examples/ directory](examples/). 
+[examples/ directory](examples/dialign-offline/). 
 
 In this tutorial, you will:
 - learn [how to format your dialogue transcripts in `tsv` format](examples#input-data-dialogue-transcripts) ;
