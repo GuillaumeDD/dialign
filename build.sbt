@@ -31,7 +31,7 @@ scalacOptions ++= Seq("-deprecation", "-Ywarn-unused", "-Ywarn-dead-code",
                       "-opt:l:inline", "-opt-inline-from:**", "-Ywarn-unused:imports")
 
 //assemblyJarName in assembly := "dialign.jar"
-//mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
+//mainClass in assembly := Some("dialign.app.DialignOfflineApp")
 
 assemblyJarName in assembly := "dialign-online.jar"
-mainClass in assembly := Some("dialign.online.DialignOnlineApp")
+mainClass in assembly := Some("dialign.app.DialignOnlineApp")

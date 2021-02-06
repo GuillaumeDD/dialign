@@ -77,8 +77,8 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
     head("dialign", "2021.02")
     note("This software is governed by the CeCILL-B license under French law and\n" +
-      "abiding by the rules of distribution of free software.  You can  use, \n" +
-      "modify and/ or redistribute the software under the terms of the CeCILL-B\n" +
+      "abiding by the rules of distribution of free software.  You can use, \n" +
+      "modify and/or redistribute the software under the terms of the CeCILL-B\n" +
       "license as circulated by CEA, CNRS and INRIA at the following URL\n" +
       "\"http://www.cecill.info\".\n" +
       "See also: https://github.com/GuillaumeDD/dialign\n")

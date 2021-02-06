@@ -36,15 +36,16 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign.online
+package dialign.app
 
-import Console.{BOLD, GREEN, RED, RESET}
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import dialign.IO.DialogueReader.Dialogue
+import dialign.online.{DialogueHistory, Utterance, UtteranceScoring}
 import dialign.{CSVUtils, Expression}
 
+import scala.Console.{BOLD, GREEN, RED, RESET}
 import scala.io.StdIn
 
 object DialignOnlineApp extends LazyLogging {
@@ -56,8 +57,8 @@ object DialignOnlineApp extends LazyLogging {
   val parser = new scopt.OptionParser[Config]("dialign-online") {
     head("dialign-online", "2021.02")
     note("This software is governed by the CeCILL-B license under French law and\n" +
-      "abiding by the rules of distribution of free software.  You can  use, \n" +
-      "modify and/ or redistribute the software under the terms of the CeCILL-B\n" +
+      "abiding by the rules of distribution of free software.  You can use, \n" +
+      "modify and/or redistribute the software under the terms of the CeCILL-B\n" +
       "license as circulated by CEA, CNRS and INRIA at the following URL\n" +
       "\"http://www.cecill.info\".\n" +
       "See also: https://github.com/GuillaumeDD/dialign\n")
