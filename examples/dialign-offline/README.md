@@ -1,4 +1,4 @@
-# Tutorial to use dialign
+# Tutorial to use `dialign` for Corpus Studies
 
 In this tutorial, you will:
 - learn [how to format your dialogue transcripts in `tsv` format](#input-data-dialogue-transcripts) ;
@@ -11,7 +11,7 @@ In this tutorial, you will:
 
 ## Input Data: Dialogue Transcripts
 
-In this tutorial, the input corpus is located in the [corpus/ directory](corpus/). It contains
+In this tutorial, the input corpus is located in the [corpus/ directory](dialign-offline/corpus/). It contains
 a single transcript "[excerpt-alice.tsv](corpus/excerpt-alice.tsv)" which content is reproduced
 below:
 ```tsv
@@ -77,7 +77,7 @@ Output files at the level of the corpus can ben broken down into:
 - speaker-independent measures, and
 - speaker dependant measures.
 
-Please refer to the section ["measures provided by `dialign`"](../README.md#measures-provided-by-dialign)
+Please refer to the section ["measures provided by `dialign`"](../../README.md#measures-provided-by-dialign)
 for a list of the provided measures.
 
 #### Speaker-independent Measures
