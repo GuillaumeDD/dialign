@@ -10,7 +10,7 @@ val gstlib = "com.github.guillaumedd" %% "gstlib" % "0.1.3"
 lazy val commonSettings = Seq(
   organization := "com.github.guillaumedd",
   version := "0.2",
-  scalaVersion := "2.13.3"
+  scalaVersion := "2.13.4"
 )
 
 lazy val root = (project in file(".")).
@@ -30,8 +30,8 @@ lazy val root = (project in file(".")).
 scalacOptions ++= Seq("-deprecation", "-Ywarn-unused", "-Ywarn-dead-code",
                       "-opt:l:inline", "-opt-inline-from:**", "-Ywarn-unused:imports")
 
-assemblyJarName in assembly := "dialign.jar"
-mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
+//assemblyJarName in assembly := "dialign.jar"
+//mainClass in assembly := Some("dialign.app.DialogueLexiconExporterApp")
 
-//assemblyJarName in assembly := "dialignMeasures.jar"
-//mainClass in assembly := Some("dialign.app.OnlineMetricsComputerApp")
+assemblyJarName in assembly := "dialign-online.jar"
+mainClass in assembly := Some("dialign.online.DialignOnlineApp")
