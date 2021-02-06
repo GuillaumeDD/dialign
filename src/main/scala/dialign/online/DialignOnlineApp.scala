@@ -54,8 +54,13 @@ object DialignOnlineApp extends LazyLogging {
                     verbose: Boolean = false)
 
   val parser = new scopt.OptionParser[Config]("dialign-online") {
-    head("dialign-online", "2021.01")
-    // TODO license & co
+    head("dialign-online", "2021.02")
+    note("This software is governed by the CeCILL-B license under French law and\n" +
+      "abiding by the rules of distribution of free software.  You can  use, \n" +
+      "modify and/ or redistribute the software under the terms of the CeCILL-B\n" +
+      "license as circulated by CEA, CNRS and INRIA at the following URL\n" +
+      "\"http://www.cecill.info\".\n" +
+      "See also: https://github.com/GuillaumeDD/dialign\n")
 
     opt[File]('f', "file").optional().valueName("<file>").
       validate(filename =>
@@ -83,6 +88,7 @@ object DialignOnlineApp extends LazyLogging {
 
     opt[Unit]('v', "verbose").action((_, c) => c.copy(verbose = true)).
       text("display logs on console")
+
   }
 
   def main(args: Array[String]): Unit = {

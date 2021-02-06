@@ -9,7 +9,7 @@ val gstlib = "com.github.guillaumedd" %% "gstlib" % "0.1.3"
 
 lazy val commonSettings = Seq(
   organization := "com.github.guillaumedd",
-  version := "0.2",
+  version := "2021.02",
   scalaVersion := "2.13.4"
 )
 
