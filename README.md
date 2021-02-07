@@ -2,14 +2,28 @@
 
 Latest version: 0.2.0 (alpha)
 
-dialign is  a software that  provides automatic and generic  measures of
+`dialign` is  a software that  provides automatic and generic  measures of
 verbal alignment and self-repetitions in  dyadic dialogue based on  sequential 
 pattern mining at the level of surface of text utterances.
 
-A good place to start can be found in the following paper:
-- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., 
-  **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 
-  \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+A good place to start can be found in the following paper 
+(more information can be found in the ["Citing `dialign`" section](#citing-dialign)):
+- Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
+                                                                           Interactions based on Measures of Lexical
+                                                                           Repetitions**, Language Resources and Evaluation, 
+                                                                           2021, 35p. \[*to appear*\]
+
+
+
+Table of content:
+- [Framework](#framework)
+- [Installation](#installation)
+- [Usage](#usage)
+   + [Tutorial to use `dialign` for corpus studies](#dialign-for-corpus-studies)
+   + [Demonstration of `dialign-online` for interactive purposes](#dialign-online-for-interactive-purposes)
+- [Contributors](#contributors)
+- [Citing `dialign`](#citing-dialign)
+- [License](#license)
 
 ## Framework
 `dialign`  is based  on the  observation that  the behaviours  of dialogue
@@ -21,7 +35,9 @@ lexicon  of   fixed  expressions.   As   a  matter  of   fact,  dialogue
 participants tend  to automatically establish and  use fixed expressions
 that become dialogue routines.
 More concretely, here follows an excerpt of a dialogue between a human and an
-agent operated by a Woz where instances of shared lexical patterns are coloured (from [[1]](#references)):
+agent operated by a Woz where instances of shared lexical patterns are coloured 
+(from the [journal article](#citing-dialign)):
+
 ![Excerpt of a dialogue between a human and an agent where instances of shared expressions are coloured.](./doc/img/example-dialogue.png)
 
 
@@ -56,8 +72,8 @@ self-repetition behaviour of DPs. Offline measures are intended to be used for
 past dialogue interactions (e.g., corpus studies) while online measures are intended
 for use in a dialogue system.
 
-`dialign` currently provides out-of-the box offline measures for corpus studies.
-Online usage in a dialogue system is under way and not yet available.
+`dialign` currently provides [out-of-the box offline measures for corpus studies](#dialign-for-corpus-studies).
+Online usage in a dialogue system is [available as a demonstration](#dialign-online-for-interactive-purposes).
 
 ### Measures Provided by dialign
 
@@ -152,21 +168,23 @@ The JAR file can be probably found in the directory `dialign/target/scala-2.13/`
 
 `dialign` is designed to be **easy to use** from the command line interface.
 
-### Tutorial
+### `dialign` for Corpus Studies
+
+#### Tutorial
 A complete **walkthrough tutorial** is available in the 
-[examples/ directory](examples/dialign-offline/). 
+[examples/dialign-offline/ directory](examples/dialign-offline/). 
 
 In this tutorial, you will:
-- learn [how to format your dialogue transcripts in `tsv` format](examples#input-data-dialogue-transcripts) ;
-- learn [how to run `dialign` on a single dialogue transcript](examples#running-dialign) (generalisation to a 
+- learn [how to format your dialogue transcripts in `tsv` format](examples/dialign-offline/#input-data-dialogue-transcripts) ;
+- learn [how to run `dialign` on a single dialogue transcript](examples/dialign-offline/#running-dialign) (generalisation to a 
   full corpus is straightforward) ; and
 - understand the output files of `dialign` where you can find 
-   + [the measures provided by `dialign` for the full corpus in `tsv` format](examples#output-files-at-the-level-of-the-corpus),
-   + [the shared expression lexicon in `tsv` format for each dialogue transcript](examples#the-shared-expression-lexicon), and
-   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](examples#the-self-repetition-lexicons).
+   + [the measures provided by `dialign` for the full corpus in `tsv` format](examples/dialign-offline/#output-files-at-the-level-of-the-corpus),
+   + [the shared expression lexicon in `tsv` format for each dialogue transcript](examples/dialign-offline/#the-shared-expression-lexicon), and
+   + [the self-repetition lexicons in `tsv` format for each dialogue transcript](examples/dialign-offline/#the-self-repetition-lexicons).
 
 
-### CLI Usage Example ###
+#### CLI Usage Example ####
 
 Let's  say  that   the  dialogue  files  are  in   the  input  directory
 `input-directory/`  and   that  output  is  planned   in  the  directory
@@ -192,28 +210,46 @@ More options are available, see usage note:
 java -jar dialign.jar -h
 ```
 
+### `dialign-online` for Interactive Purposes
+This framework can also be embedded in an interactive system.
+To demonstrate these capabilities, a complete tutorial is available in the 
+[examples/dialign-online/ directory](examples/dialign-online/). 
+
+In this tutorial, you will:
+- learn [how to run `dialign-online` in interactive mode and export the transcript of the created dialogue](examples/dialign-online/#running-dialign-online-in-interactive-mode) ; and
+- learn [how to run `dialign-online` on a single dialogue transcript](examples/dialign-online/#running-dialign-online-on-a-dialogue-transcript) 
+  in order to directly compute online metrics for each turn.
+
+A screenshot of this demonstration can be found below:
+
+![Demonstration of `dialign-online`](examples/dialign-online/screenshots/02.png)
+
 ## Contributors ##
 
-- Guillaume Dubuisson Duplessis (2017, 2020)
+- Guillaume Dubuisson Duplessis (2017, 2020, 2021)
 
-## Usage for Research Purposes ##
+## Citing `dialign` ##
 
-If you use this software for  research purposes, please make reference to
-it by citing the following paper:
-- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+If you want to refer to the framework or to the `dialign` software, please cite 
+the following paper:
+- Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
+                                                                     Interactions based on Measures of Lexical
+                                                                     Repetitions**, Language Resources and Evaluation, 
+                                                                     2021, 35p. \[*to appear*\]
 
+If you want to refer to the study strictly limited to verbal alignment on a Human-Agent 
+negotiation task, please cite this paper :
+- Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to 
+  Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting 
+  of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, 
+  pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
+
+### Contact
 The authors  of this work would  be happy to  hear about you if  you are
 using this code! Please, do not hesitate to contact us:
 - G. Dubuisson Duplessis <[website](http://www.dubuissonduplessis.fr/contact.html)>
 - C. Clavel <[website](https://clavel.wp.imt.fr/)>
 - F. Landragin <[website](http://fred.landragin.free.fr/)>
-
-## References ##
-- [0] Dubuisson Duplessis, G.; Clavel, C.; Landragin, F., **Automatic Measures to Characterise Verbal Alignment in Human-Agent Interaction**, 18th Annual Meeting of the Special Interest Group on Discourse and Dialogue (SIGDIAL), 2017, pp. 71--81 \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
-- [1] Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
-                                                                         Interactions based on Measures of Lexical
-                                                                         Repetitions**, TODO, 2020, pp. XX-XX \[[See paper](http://www.sigdial.org/workshops/conference18/proceedings/pdf/SIGDIAL10.pdf) | [BIB](http://www.sigdial.org/workshops/conference18/proceedings/bib/SIGDIAL10.bib)\]
-
 
 ## License ##
 
