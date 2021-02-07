@@ -1,6 +1,6 @@
 # dialign #
 
-Latest version: 0.2.0 (alpha)
+Latest version: [1.0](CHANGELOG.md#10---2021-02-07)
 
 `dialign` is  a software that  provides automatic and generic  measures of
 verbal alignment and self-repetitions in  dyadic dialogue based on  sequential 

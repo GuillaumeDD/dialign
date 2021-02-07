@@ -60,7 +60,7 @@ import dialign.nlp.{Normalizer, Tokenizer}
   *  - for the whole corpus, a synthesis file with the computed measures for each dialogue
   *
   */
-object DialogueLexiconExporterApp extends LazyLogging {
+object DialignOfflineApp extends LazyLogging {
 
   case class Config(inputDirectory: File = new File("."),
                     outputDirectory: File = new File("."),
@@ -75,7 +75,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
 
   val parser = new scopt.OptionParser[Config]("dialign") {
 
-    head("dialign", "2021.02")
+    head("dialign", "1.0")
     note("This software is governed by the CeCILL-B license under French law and\n" +
       "abiding by the rules of distribution of free software.  You can use, \n" +
       "modify and/or redistribute the software under the terms of the CeCILL-B\n" +
