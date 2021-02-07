@@ -63,8 +63,8 @@ linguistic production of a given DP.
 
 The main concept behind this model is the automatically built lexicon. For each
 dialogue transcript, three lexicons are automatically computed:
-- [the shared expression lexicon](examples#the-shared-expression-lexicon): keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
-- [one self-repetition lexicon per DP](examples#the-self-repetition-lexicons): keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
+- [the shared expression lexicon](examples/dialogue-offline/#the-shared-expression-lexicon): keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
+- [one self-repetition lexicon per DP](examples/dialogue-offline/#the-self-repetition-lexicons): keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
 
 Lexicons and the dialogue transcript are leveraged by deriving offline and
 online measures to quantify aspects of the verbal alignment process and the
@@ -169,6 +169,8 @@ The JAR file can be probably found in the directory `dialign/target/scala-2.13/`
 `dialign` is designed to be **easy to use** from the command line interface.
 
 ### `dialign` for Corpus Studies
+
+`dialign` provides out-of-the box offline measures for corpus studies.
 
 #### Tutorial
 A complete **walkthrough tutorial** is available in the 
