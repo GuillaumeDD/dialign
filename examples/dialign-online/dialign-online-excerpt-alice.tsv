@@ -1,0 +1,46 @@
+locutor	utterance	der	sharedExpressions	establishedSharedExpressions	dser	selfRepetitions
+"Human"	"okay well but the books like there are many eh facts in the book which are against the law of physics like the piece of cake which is which makes eh Alice bigger or smaller i don't remember but which"	0.0	""	""	0.0	""
+"Agent"	"indeed"	0.0	""	""	0.0	""
+"Human"	"yeah eh does the piece of cake makes Alice bigger or smaller ?"	0.0	""	""	0.7692307692307693	"makes
+Alice bigger or smaller
+eh
+the piece of cake
+of
+the"
+"Agent"	"the piece of cake grows Alice"	0.8333333333333334	"the piece of cake
+Alice
+of
+the"	"the
+Alice
+of
+the piece of cake"	0.0	""
+"Human"	"grows Alice okay and what makes her smaller ?"	0.2222222222222222	"grows Alice
+Alice"	"grows Alice"	0.5555555555555556	"smaller ?
+okay
+makes
+Alice"
+"Agent"	"sorry could you repeat that ?"	0.0	""	""	0.0	""
+"Human"	"what makes eh Alice smaller ?"	0.16666666666666666	"Alice"	""	1.0	"makes
+smaller ?
+makes eh Alice
+Alice
+what makes
+eh"
+"Agent"	"throughout the book there are many making her smaller"	0.7777777777777778	"are
+there are many
+her smaller
+smaller
+the book
+the"	"are
+there are many
+her smaller
+smaller
+the book"	0.1111111111111111	"the"
+"Human"	"i'm sorry i didn't understand"	0.2	"sorry"	"sorry"	0.2	"i"
+"Agent"	"throughout the book there are many passages where Alice shrinks"	0.6	"are
+there are many
+Alice
+the book
+the"	""	0.7	"throughout the book there are many
+Alice
+the"
