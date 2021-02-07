@@ -63,8 +63,8 @@ linguistic production of a given DP.
 
 The main concept behind this model is the automatically built lexicon. For each
 dialogue transcript, three lexicons are automatically computed:
-- [the shared expression lexicon](examples/dialogue-offline/#the-shared-expression-lexicon): keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
-- [one self-repetition lexicon per DP](examples/dialogue-offline/#the-self-repetition-lexicons): keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
+- [the shared expression lexicon](examples/dialign-offline/#the-shared-expression-lexicon): keeps  track of shared  expressions and valuable features about these  expressions  (e.g.,  who  first produced  this  expression,  its frequency)
+- [one self-repetition lexicon per DP](examples/dialign-offline/#the-self-repetition-lexicons): keeps  track of self-repetitions and valuable features about these  patterns  (e.g., its frequency)
 
 Lexicons and the dialogue transcript are leveraged by deriving offline and
 online measures to quantify aspects of the verbal alignment process and the
