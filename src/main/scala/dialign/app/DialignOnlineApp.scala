@@ -362,15 +362,15 @@ object IO {
 
           // Saving the result of the scoring
           val newLine = List(
-            locutor,
-            text,
+            "\"" + CSVUtils.csvProtect(locutor) + "\"",
+            "\"" + CSVUtils.csvProtect(text) + "\"",
             // Verbal alignment
             f"${result.der}",
-            result.sharedExpressions.map(expressionToString).mkString("\n"),
-            result.establishedSharedExpressions.map(expressionToString).mkString("\n"),
+            "\"" + CSVUtils.csvProtect(result.sharedExpressions.map(expressionToString).mkString("\n")) + "\"",
+            "\"" + CSVUtils.csvProtect(result.establishedSharedExpressions.map(expressionToString).mkString("\n")) + "\"",
             // Self-repetitions
             f"${result.dser}",
-            result.selfExpressions.map(expressionToString).mkString("\n")
+            "\"" + CSVUtils.csvProtect(result.selfExpressions.map(expressionToString).mkString("\n")) + "\""
           )
           writer.println(CSVUtils.mkCSV(newLine))
 
