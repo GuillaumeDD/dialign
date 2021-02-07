@@ -2,7 +2,7 @@
  * Copyright ISIR, CNRS
  *
  * Contributor(s) :
- *    Guillaume Dubuisson Duplessis <gdubuisson@isir.upmc.fr> (2017)
+ *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017)
  *
  * This software is a computer program whose purpose is to implement
  * automatic and generic measures of verbal alignment in dyadic dialogue
@@ -40,37 +40,33 @@ package dialign.app
 
 import java.io.File
 
+import dialign.IO.{getFilenames, withFile}
 import com.typesafe.scalalogging.LazyLogging
-import dialign.CSVUtils
-import dialign.metrics.offline.DialogueLexiconMeasures
-import dialign.metrics.offline.DialogueLexiconMeasures.toCSV
-import dialign.DialogueLexiconBuilder
-import dialign.IO.{DialogueReader, getFilenames}
-import dialign.IO
-import dialign.DialogueLexicon.{mkHierarchicalInventory, mkStringTurns}
-import dialign.nlp.{Normalizer, Tokenizer}
+import dialign.DialogueLexiconBuilder.ExpressionType
+import dialign.{CorpusLexicon, DialogueLexiconBuilder}
+import dialign.IO.DialogueReader
+import dialign.IO.DialogueReader.Dialogue
+import dialign.nlp.{Delexicalizer, Normalizer, Tokenizer}
 
 /**
-  * Application that computes verbal alignment measures for a set of dialogue files
-  *
-  * It takes as input a set of dialogue files (i.e. dialogue transcripts) and outputs:
-  *  - for each dialogue, the expression lexicon and a tagged version of the dialogue transcript with expressions
-  *  - for the whole corpus, a synthesis file with the computed measures for each dialogue
+  * Computes and export a shared lexicon from a corpus of dialogue transcripts
   *
   */
-object DialogueLexiconExporterApp extends LazyLogging {
+object LexiconExporterApp extends LazyLogging {
 
   case class Config(inputDirectory: File = new File("."),
-                    outputDirectory: File = new File("."),
-                    outputSynthesisFilename: String = "dial-synthesis.csv",
+                    outputFile: File = new File("lexicon-RSTP.csv"),
+                    withDelexicalisation: Boolean = false,
                     withNormalisation: Boolean = false,
+                    withBeginAndEndMarkers: Boolean = false,
+                    rstpType: String = "all",
                     filenamePrefix: String = "",
                     filenameSuffix: String = "",
                     filenameExtension: String = "txt"
                    )
 
-  val parser = new scopt.OptionParser[Config]("dialign") {
-    head("dialign", "2017.08")
+  val parser = new scopt.OptionParser[Config]("dialRSTP") {
+    head("dialRSTP", "2017.07")
 
     opt[File]('i', "input").required().valueName("<directory>").
       validate(dirname =>
@@ -79,19 +75,24 @@ object DialogueLexiconExporterApp extends LazyLogging {
       action((x, c) => c.copy(inputDirectory = x)).
       text("input directory containing dialogue files")
 
-    opt[File]('o', "output").optional().valueName("<directory>").
-      validate(dirname =>
-        if (dirname.isDirectory) success
-        else failure("Output must be a directory!")).
-      action((x, c) => c.copy(outputDirectory = x)).
-      text("output directory for the computed dialogue lexicon files")
+    opt[File]('o', "output").optional().valueName("<filename>").
+      action((x, c) => c.copy(outputFile = x)).
+      text("output filename for the lexicon of RSTP")
 
-    opt[String]('y', "synthesis").optional().valueName("<filename_synthesis>").
-      action((x, c) => c.copy(outputSynthesisFilename = x)).
-      text("output filename for the synthesis file regrouping measures on all the dialogues")
+    opt[String]('r', "rstp").action((x, c) => c.copy(rstpType = x)).
+      validate(rstpType =>
+        if (rstpType == "all" || rstpType == "intra" || rstpType == "inter") success
+        else failure(s"RSTP type must be one of this value: all|intra|inter (here: '$rstpType')")).
+      text("RSTP to consider: all|intra|inter")
 
-    opt[Unit]('n', "normalisation").action((x, c) => c.copy(withNormalisation = true)).
-      text("activates token normalisation")
+    opt[Unit]('d', "delexicalisation").action((_, c) => c.copy(withDelexicalisation = true)).
+      text("activates delexicalisation")
+
+    opt[Unit]('n', "normalisation").action((_, c) => c.copy(withNormalisation = true)).
+      text("activates normalisation")
+
+    opt[Unit]('m', "markers").action((_, c) => c.copy(withBeginAndEndMarkers = true)).
+      text("adds begin and end markers to utterances")
 
     opt[String]('p', "prefix").optional().valueName("<filename_prefix>").
       action((x, c) => c.copy(filenamePrefix = x)).
@@ -105,6 +106,7 @@ object DialogueLexiconExporterApp extends LazyLogging {
       action((x, c) => c.copy(filenameExtension = x)).
       text("required extension of the dialogue file names (without the '.'; e.g. 'txt')")
   }
+
 
   def main(args: Array[String]): Unit = {
     parser.parse(args, Config()) match {
@@ -120,6 +122,12 @@ object DialogueLexiconExporterApp extends LazyLogging {
             s" and required extension='${config.filenameExtension}'")
 
         } else {
+          logger.debug("Loading dialogue files" +
+            s" from directory '${config.inputDirectory.getAbsolutePath}'" +
+            s" with required prefix ='${config.filenamePrefix}'," +
+            s" required suffix='${config.filenameSuffix}'" +
+            s" and required extension='${config.filenameExtension}'")
+
           // Determining the normalizer to use
           val normalize = if (config.withNormalisation) {
             Normalizer.normalize _
@@ -127,85 +135,55 @@ object DialogueLexiconExporterApp extends LazyLogging {
             Normalizer.identity _
           }
 
-          // Loading dialogues
+          // Determining the delexicaliser to use
+          val delexicalize = if (config.withDelexicalisation) {
+            Delexicalizer.delexicalize _
+          } else {
+            Delexicalizer.identity _
+          }
+
+          val tokenize = if(config.withBeginAndEndMarkers){
+            Tokenizer.tokenize _
+          } else {
+            Tokenizer.tokenizeWithoutMarkers _
+          }
+
           val dialogues = for (file <- inputFiles)
-            yield DialogueReader.load(file = file,
-              tokenize = Tokenizer.tokenizeWithoutMarkers,
-              normalize = normalize)
+            yield DialogueReader.load(file, tokenize,
+              delexicalize,
+              normalize)
 
           logger.debug(s"${dialogues.size} dialogue files have been loaded")
 
-          // Outputing the results
-          val OUTPUT_DIR = config.outputDirectory.getAbsolutePath
-
-          val results = for (dialogue <- dialogues)
-            yield {
-              val result = DialogueProcessor(OUTPUT_DIR, dialogue).process()
-              (dialogue.name, result)
+          val lexiconMode =
+            if (config.rstpType == "all") {
+              ExpressionType.ALL
+            } else if (config.rstpType == "intra") {
+              ExpressionType.OWN_REPETITION_ONLY
+            } else {
+              // config.rstpType == "inter"
+              ExpressionType.INTER_REPETITION_ONLY
             }
 
-          // Outputing the synthesis regrouping a synthesis of all the files
-          val PATH_FILENAME_OUTPUT = s"$OUTPUT_DIR/${config.outputSynthesisFilename}"
-          logger.debug(s"Outputing dialogue synthesis in $PATH_FILENAME_OUTPUT")
-          IO.withFile(PATH_FILENAME_OUTPUT) {
-            writer =>
-              writer.println(DialogueLexiconMeasures.headingToCSV)
-              for ((name, result) <- results) {
-                writer.println(CSVUtils.join(name, result))
+          val dialogueLexicons =
+            for (d@Dialogue(dialogueName, utterances, getRawSpeaker) <- dialogues)
+              yield {
+                logger.debug(s"Building dialogue lexicon for dialogue: $dialogueName")
+                DialogueLexiconBuilder(utterances, d.getSpeaker, d.getRawSpeaker, lexiconMode)
               }
+
+          val corpusLexicon = CorpusLexicon.aggregate(dialogueLexicons)
+
+          logger.debug(s"Outputing lexicon in file: ${config.outputFile}")
+          withFile(config.outputFile) {
+            writer =>
+              writer.println(corpusLexicon.mkHierarchicalInventory)
           }
         }
 
       case None =>
       // arguments are bad, error message will have been displayed
+
     }
   }
-
-  case class DialogueProcessor(outputDir: String,
-                               dialogue: DialogueReader.Dialogue) {
-
-    val dialogueID = dialogue.name
-    val utterances = dialogue.utterances
-    val turnID2Speaker = dialogue.getSpeaker _
-
-    // Building the lexicon
-    logger.debug(s"Building dialogue lexicon for dialogue: $dialogueID")
-    val lexicon = DialogueLexiconBuilder(utterances, turnID2Speaker)
-
-    def process(): String = {
-      outputLexicon()
-      outputDialogue()
-
-      toCSV(DialogueLexiconMeasures(lexicon))
-    }
-
-
-    def outputDialogue(): Unit = {
-      val filename_dialogueTXT = s"$outputDir/$dialogueID-dialogue.txt"
-      logger.debug(s"Outputing dialogue in $filename_dialogueTXT (for dialogue: $dialogueID)")
-
-      IO.withFile(filename_dialogueTXT) {
-        writer =>
-          writer.println(mkStringTurns(lexicon))
-
-          writer.println()
-
-          writer.println("TURN DETAILS:")
-          for (turn <- lexicon.turns) {
-            writer.println(turn)
-          }
-      }
-    }
-
-    def outputLexicon(): Unit = {
-      val filename_lexicon = s"$outputDir/$dialogueID-lexicon.csv"
-      logger.debug(s"Outputing dialogue lexicon in $filename_lexicon (for dialogue: $dialogueID)")
-
-      IO.withFile(filename_lexicon) {
-        writer =>
-          writer.println(mkHierarchicalInventory(lexicon))
-      }
-    }
-  }
-
 }

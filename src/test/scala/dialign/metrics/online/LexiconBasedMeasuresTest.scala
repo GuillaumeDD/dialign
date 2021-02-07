@@ -36,9 +36,56 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign
+package dialign.metrics.online
 
-object Speaker extends Enumeration {
-  type Speaker = Value
-  val A, B = Value
+import dialign.DialogueLexiconBuilder
+import org.scalatest.funsuite.AnyFunSuite
+
+
+class LexiconBasedMeasuresTest extends AnyFunSuite {
+
+  trait Dialogues {
+
+    import dialign.Speaker.{A, B}
+    import dialign.nlp.Tokenizer.{tokenizeWithoutMarkers => tokenize}
+
+    val utterances1 = IndexedSeq(
+      tokenize("so what did you and the other animals do next ?"),
+      tokenize("the other animals and I swam to the shore , get out of the water and we were all wet .")
+    )
+    val turn2speaker1 = Map(0 -> A, 1 -> B)
+    val lexicon1 = DialogueLexiconBuilder(utterances1, turn2speaker1)
+
+
+    val utterances2 = IndexedSeq(
+      tokenize("foo"),
+      tokenize("bar")
+    )
+    val turn2speaker2 = Map(0 -> A, 1 -> B)
+    val lexicon2 = DialogueLexiconBuilder(utterances2, turn2speaker2)
+  }
+
+  test("Expression repetition online metrics should compute the ER of the last utterance") {
+    new Dialogues {
+      // Test with dialogue 1
+      val measures1 = LexiconBasedMeasures(lexicon1)
+      assert(measures1.expressionRepetition == 7.0d / 21.0d)
+
+      // Test with dialogue 2
+      val measures2 = LexiconBasedMeasures(lexicon2)
+      assert(measures2.expressionRepetition == 0.0d)
+    }
+  }
+
+  test("Expression contribution online metrics should compute the number of established expression of the last turn") {
+    new Dialogues {
+      // Test with dialogue 1
+      val measures1 = LexiconBasedMeasures(lexicon1)
+      assert(measures1.lexiconContribution == 3)
+
+      // Test with dialogue 2
+      val measures2 = LexiconBasedMeasures(lexicon2)
+      assert(measures2.lexiconContribution == 0)
+    }
+  }
 }

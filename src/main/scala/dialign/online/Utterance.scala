@@ -2,7 +2,7 @@
  * Copyright ISIR, CNRS
  *
  * Contributor(s) :
- *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017)
+ *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017, 2020, 2021)
  *
  * This software is a computer program whose purpose is to implement
  * automatic and generic measures of verbal alignment in dyadic dialogue
@@ -36,9 +36,6 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign
+package dialign.online
 
-object Speaker extends Enumeration {
-  type Speaker = Value
-  val A, B = Value
-}
+case class Utterance(locutor: String, text: String)

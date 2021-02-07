@@ -1,0 +1,13 @@
+Freq.	Free Freq.	Size	Surface Form	Establishment turn	Spanning	Priming	First Speaker	Turns
+3	3	4	the piece of cake	3	4	2	Human	0, 2, 3
+3	3	3	there are many	7	10	1	Human	0, 7, 9
+3	3	2	the book	7	10	1	Human	0, 7, 9
+2	2	2	grows Alice	4	2	1	Agent	3, 4
+2	2	2	her smaller	7	4	1	Human	4, 7
+6	4	1	Alice	3	10	2	Human	0, 2, 3, 4, 6, 9
+5	3	1	smaller	7	8	4	Human	0, 2, 4, 6, 7
+5	1	1	the	3	10	2	Human	0, 2, 3, 7, 9
+3	1	1	are	7	10	1	Human	0, 7, 9
+3	1	1	of	3	4	2	Human	0, 2, 3
+2	2	1	sorry	8	4	1	Agent	5, 8
+

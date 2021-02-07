@@ -1,0 +1,43 @@
+B|0| Human: okay well but _the_ books like _there are many_ eh facts in _the book_ which _are_ against _the_ law _of_ physics like _the piece of cake_ which is which makes eh _Alice_ bigger or _smaller_ i don't remember but which 
+A|1| Agent: indeed 
+B|2| Human: yeah eh does _the piece of cake_ makes _Alice_ bigger or _smaller_ ? 
+A|3| Agent: [the piece of cake] _grows Alice_ 
+B|4| Human: [grows Alice] okay and what makes _her smaller_ ? 
+A|5| Agent: _sorry_ could you repeat that ? 
+B|6| Human: what makes eh [Alice] _smaller_ ? 
+A|7| Agent: throughout [the book] [there are many] making [her smaller] 
+B|8| Human: i'm [sorry] i didn't understand 
+A|9| Agent: throughout [the book] [there are many] passages where [Alice] shrinks 
+
+
+TURN DETAILS:
+Turn ID=0| B | Human : okay well but the books like there are many eh facts in the book which are against the law of physics like the piece of cake which is which makes eh Alice bigger or smaller i don't remember but which
+	Free: Pattern=there are many, Pattern=smaller, Pattern=of, Pattern=the book, Pattern=the piece of cake, Pattern=are, Pattern=Alice, Pattern=the
+	Constrained: Pattern=are, Pattern=of, Pattern=the
+Turn ID=1| A | Agent : indeed
+	Free: 
+	Constrained: 
+Turn ID=2| B | Human : yeah eh does the piece of cake makes Alice bigger or smaller ?
+	Free: Pattern=the piece of cake, Pattern=smaller, Pattern=Alice
+	Constrained: Pattern=of, Pattern=the
+Turn ID=3| A | Agent : the piece of cake grows Alice
+	Free: Pattern=the piece of cake, Pattern=grows Alice
+	Constrained: Pattern=Alice, Pattern=of, Pattern=the
+Turn ID=4| B | Human : grows Alice okay and what makes her smaller ?
+	Free: Pattern=grows Alice, Pattern=her smaller
+	Constrained: Pattern=smaller, Pattern=Alice
+Turn ID=5| A | Agent : sorry could you repeat that ?
+	Free: Pattern=sorry
+	Constrained: 
+Turn ID=6| B | Human : what makes eh Alice smaller ?
+	Free: Pattern=smaller, Pattern=Alice
+	Constrained: 
+Turn ID=7| A | Agent : throughout the book there are many making her smaller
+	Free: Pattern=there are many, Pattern=the book, Pattern=her smaller
+	Constrained: Pattern=are, Pattern=smaller, Pattern=the
+Turn ID=8| B | Human : i'm sorry i didn't understand
+	Free: Pattern=sorry
+	Constrained: 
+Turn ID=9| A | Agent : throughout the book there are many passages where Alice shrinks
+	Free: Pattern=there are many, Pattern=the book, Pattern=Alice
+	Constrained: Pattern=are, Pattern=the

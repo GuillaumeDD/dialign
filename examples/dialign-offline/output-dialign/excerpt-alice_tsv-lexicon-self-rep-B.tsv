@@ -1,0 +1,14 @@
+Freq.	Size	Surface Form	Spanning	First Speaker	Turns
+2	4	Alice bigger or smaller	3	Human	0, 2
+2	4	the piece of cake	3	Human	0, 2
+2	3	makes eh Alice	7	Human	0, 6
+3	2	smaller ?	5	Human	2, 4, 6
+2	2	what makes	3	Human	4, 6
+4	1	Alice	7	Human	0, 2, 4, 6
+4	1	makes	7	Human	0, 2, 4, 6
+3	1	eh	7	Human	0, 2, 6
+2	1	i	9	Human	0, 8
+2	1	of	3	Human	0, 2
+2	1	okay	5	Human	0, 4
+2	1	the	3	Human	0, 2
+

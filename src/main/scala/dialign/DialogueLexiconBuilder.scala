@@ -2,7 +2,7 @@
  * Copyright ISIR, CNRS
  *
  * Contributor(s) :
- *    Guillaume Dubuisson Duplessis <gdubuisson@isir.upmc.fr> (2017)
+ *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017)
  *
  * This software is a computer program whose purpose is to implement
  * automatic and generic measures of verbal alignment in dyadic dialogue
@@ -61,6 +61,13 @@ object DialogueLexiconBuilder extends LazyLogging {
       B
     }
 
+  def getSpeakerStrReprDefault(speaker: Speaker): String =
+    if(speaker == A) {
+      "A"
+    } else {
+      "B"
+    }
+
   protected def isValidToken(token: String): Boolean =
     token != Tokenizer.BEGIN_MARKER &&
       token != Tokenizer.END_MARKER &&
@@ -87,6 +94,7 @@ object DialogueLexiconBuilder extends LazyLogging {
     */
   def apply(utterances: IndexedSeq[TokenizedUtterance],
             turnID2Speaker: Int => Speaker = getSpeakerDefault,
+            speaker2string: Speaker => String = getSpeakerStrReprDefault,
             mode: ExpressionType = INTER_REPETITION_ONLY,
             isValidSequence: TokenizedUtterance => Boolean = isValidSequenceDefault): DialogueLexicon = {
     // Pre-processing: building the generalized suffix tree
@@ -122,7 +130,7 @@ object DialogueLexiconBuilder extends LazyLogging {
 
           // TODO the following code might be optimized in the future
           val positionsBySpeaker = positions.groupBy({
-            case (turnID, startPos) => turnID2Speaker(turnID)
+            case (turnID, _) => turnID2Speaker(turnID)
           })
           val numberOfSpeaker = positionsBySpeaker.size
 
@@ -184,7 +192,7 @@ object DialogueLexiconBuilder extends LazyLogging {
       }
 
       val subsequencesAll = mutable.Set[Expression]() // TODO the following code might be optimized in the future
-      for (expr <- orderedSubsequences.dequeueAll) {
+      for (expr <- orderedSubsequences.dequeueAll[Expression]) {
         // subsequences are ordered by size
         subsequencesAll += expr
 
@@ -230,11 +238,11 @@ object DialogueLexiconBuilder extends LazyLogging {
 
 
       (subsequences.filter(appearsAtLeastOnceFreeExpression(_)).toSet,
-        expr2positions.mapValues(seqIDandPos => seqIDandPos.map(_._1)).toMap,
-        turnID2expr2startingPos.mapValues(_.filterKeys(appearsAtLeastOnceFreeExpression(_))).toMap,
-        turnID2expr2startingPosConstrained.mapValues(_.filterKeys(appearsAtLeastOnceFreeExpression(_))).toMap,
-        expr2freq.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap,
-        expr2numSpeaker.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap
+        expr2positions.view.mapValues(seqIDandPos => seqIDandPos.map(_._1)).toMap,
+        turnID2expr2startingPos.view.mapValues(_.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap).toMap,
+        turnID2expr2startingPosConstrained.view.mapValues(_.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap).toMap,
+        expr2freq.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap,
+        expr2numSpeaker.view.filterKeys(appearsAtLeastOnceFreeExpression(_)).toMap
       )
     }
 
@@ -245,6 +253,6 @@ object DialogueLexiconBuilder extends LazyLogging {
 
     new DialogueLexicon(expressions, expr2turnID, expr2freq, expr2numSpeakers,
       turnID2expr2startingPos, turnID2expr2startingPosConstrained,
-      utterances, turnID2Speaker)
+      utterances, turnID2Speaker, speaker2string)
   }
 }

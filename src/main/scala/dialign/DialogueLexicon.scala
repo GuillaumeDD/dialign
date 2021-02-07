@@ -2,7 +2,7 @@
  * Copyright ISIR, CNRS
  *
  * Contributor(s) :
- *    Guillaume Dubuisson Duplessis <gdubuisson@isir.upmc.fr> (2017)
+ *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017)
  *
  * This software is a computer program whose purpose is to implement
  * automatic and generic measures of verbal alignment in dyadic dialogue
@@ -67,7 +67,8 @@ class DialogueLexicon(
                        private val turnID2expr2startingPos: Map[Int, Map[Expression, SortedSet[Int]]],
                        private val turnID2expr2startingPosConstrained: Map[Int, Map[Expression, SortedSet[Int]]],
                        utterances: IndexedSeq[TokenizedUtterance],
-                       turnID2Speaker: Int => Speaker
+                       turnID2Speaker: Int => Speaker,
+                       speaker2string: Speaker => String
                      ) extends LazyLogging {
   lexicon =>
 
@@ -76,7 +77,7 @@ class DialogueLexicon(
   def exprsInitialisedBy(speaker: Speaker): Set[Expression] =
     for {
       expr <- expressions
-      if expr.firstSpeaker == speaker
+      if expr.firstSpeaker() == speaker
     } yield (expr)
 
   /**
@@ -86,6 +87,21 @@ class DialogueLexicon(
     * @return speaker of the turn
     */
   def getSpeaker(turnID: Int): Speaker = turnID2Speaker(turnID)
+
+  /**
+    * Computes the speaker string representation of a turn given its index
+    *
+    * @param turnID index of the turn
+    * @return string representation of the speaker of the turn
+    */
+  def getSpeakerStrRepr(turnID: Int) : String = speaker2string(getSpeaker(turnID))
+
+  /**
+    *
+    * @return a pair (string representation for speaker A, string representation for speaker B)
+    */
+  def rawSpeakers(): (String, String) =
+      (speaker2string(A), speaker2string(B))
 
   /**
     * Computes the set of free expressions included in a given turn
@@ -118,7 +134,12 @@ class DialogueLexicon(
   /*
    * CONTEXTUALISED EXPRESSION
    */
+  /**
+    * Computes the number of utterances in which the given expression appears (in a free or constrained form)
+    *
+    */
   def freq(expr: Expression): Int = expr.freq
+
 
   def numberOfDifferentSpeakers(expr: Expression): Int = expr.numberOfDifferentSpeakers
 
@@ -128,8 +149,51 @@ class DialogueLexicon(
     * @param expr
     */
   implicit class ContextualisedExpression(expr: Expression) {
-
+    /**
+      * Computes the number of utterances in which the given expression appears (in a free or constrained form)
+      *
+      */
     def freq: Int = lexicon.expr2freq(expr)
+
+    /**
+      * Computes the number of utterances in which the given expression appears in a *free* form
+      *
+      * @note This operation is not efficient.
+      */
+    def freeFreq(): Int = {
+      val numberOfAppearances =
+        for {
+          turnID <- expr2turnID(expr).toList // Set to List to avoid surprise when mapping to the number of starting positions
+          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty[Int])
+        } yield {
+          if (startingPos.size > 0) {
+            1
+          } else {
+            0
+          }
+        }
+
+      numberOfAppearances.sum
+    }
+
+    /**
+      * Computes the number of occurrences in which the given expression appears in a *free* form
+      *
+      * It may appear several times in the same utterance.
+      *
+      * @note This operation is not efficient.
+      */
+    def freeFreqFromPos(): Int = {
+      val numberOfAppearances =
+        for {
+          turnID <- expr2turnID(expr).toList // Set to List to avoid surprise when mapping to the number of starting positions
+          startingPos = turnID2expr2startingPos(turnID).getOrElse(expr, SortedSet.empty[Int])
+        } yield {
+          startingPos.size
+        }
+
+      numberOfAppearances.sum
+    }
 
     def numberOfDifferentSpeakers: Int = lexicon.expr2numSpeakers(expr)
 
@@ -177,7 +241,7 @@ class DialogueLexicon(
         established = speaker1 && speaker2 && freeFormUsage
       }
       if (!established) {
-        logger.error(s"Unable to compute establishment turn ID for: $expr")
+        logger.debug(s"Unable to compute establishment turn ID for: $expr")
         lexicon.turns.size
       } else {
         turnID
@@ -196,6 +260,8 @@ class DialogueLexicon(
     def firstSpeaker(): Speaker = {
       getSpeaker(turns().head)
     }
+
+    def firstSpeakerRepr(): String = speaker2string(firstSpeaker())
 
     /**
       * Computes the ranges of token IDs involved in this expression for a given turn
@@ -241,6 +307,7 @@ class DialogueLexicon(
     */
   case class Turn(id: Int) {
     def speaker: Speaker = getSpeaker(id)
+    def rawSpeaker: String = getSpeakerStrRepr(id)
 
     def content: TokenizedUtterance = utterances(id)
 
@@ -266,6 +333,12 @@ class DialogueLexicon(
 
     def tokenSize: Int = content.size
 
+    /**
+      * Computes the ratio of tokens belonging to an *established* expression in this turn
+      *
+      * @see rawExprsTokenSize method is a similar method that does not take into account expression establishment
+      *
+      */
     lazy val exprsTokenSize: Int = {
       // Recovering the ranges of token positions involved in an expression
       val flatRanges =
@@ -282,8 +355,28 @@ class DialogueLexicon(
       } yield (i)).size
     }
 
+    /**
+      * Computes the ratio of tokens belonging to an expression (without taking into account establishment) in this turn
+      *
+      * @see exprsTokenSize method is a similar method that takes into account expression establishment
+      */
+    lazy val rawExprsTokenSize: Int = {
+      // Recovering the ranges of token positions involved in an expression
+      val flatRanges =
+        for {
+          expr <- this.freeExpressions
+          range <- expr.ranges(this.id)
+        } yield (range)
+
+      // Recovering and counting token involved in an expression
+      (for {
+        i <- 0 until tokenSize
+        if flatRanges.exists(range => range.contains(i))
+      } yield (i)).size
+    }
+
     override def toString: String =
-      s"""Turn ID=$id| $speaker: ${content.mkString(" ")}
+      s"""Turn ID=$id| $speaker | $rawSpeaker : ${content.mkString(" ")}
                      |\tFree: ${freeExpressions.map(_.mkString).mkString(", ")}
                      |\tConstrained: ${constrainedExpressions.map(_.mkString).mkString(", ")}""".stripMargin
   }
@@ -318,6 +411,10 @@ class DialogueLexicon(
 }
 
 object DialogueLexicon {
+  /**
+    * Builds a hierarchical inventory string representation for other-repetitions
+    *
+    */
   def mkHierarchicalInventory(lexicon: DialogueLexicon): String = {
     import lexicon._
 
@@ -347,16 +444,61 @@ object DialogueLexicon {
         }
     })
 
-    buffer.append(CSVUtils.mkCSV(List("Freq.", "Size", "Surface Form",
+    buffer.append(CSVUtils.mkCSV(List("Freq.", "Free Freq.", "Size", "Surface Form",
       "Establishment turn", "Spanning", "Priming", "First Speaker",
       "Turns")))
     buffer.append("\n")
     for (expr <- sortedExpressions) {
       val establishementTurn = expr.establishementTurnID()
 
-      buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.content.size, expr.content.mkString(" "),
-        establishementTurn, expr.span(), expr.priming(), expr.firstSpeaker(),
+      buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.freeFreq(), expr.content.size, expr.content.mkString(" "),
+        establishementTurn, expr.span(), expr.priming(), expr.firstSpeakerRepr(),
         expr.turns().mkString(", "))))
+      buffer.append("\n")
+    }
+
+    buffer.result()
+  }
+
+  /**
+    * Builds a hierarchical inventory string representation for self-repetitions
+    *
+    */
+  def mkSelfRepetitionHierarchicalInventory(lexicon: DialogueLexicon): String = {
+    import lexicon._
+
+    val buffer = new StringBuilder()
+
+    // TODO the following code might be subject to optimization in the future
+    val sortedExpressions = lexicon.expressions.toList.sortWith({
+      case (expr1, expr2) =>
+        if (expr1.content.size > expr2.content.size) {
+          // sorting by size DESC
+          true
+        } else if (expr1.content.size < expr2.content.size) {
+          false
+        } else {
+          // equal size
+          if (expr1.freq > expr2.freq) {
+            // sorting by freq DESC
+            true
+          } else if (expr1.freq < expr2.freq) {
+            false
+          } else {
+            // equal freq
+            val expr1seq = expr1.content.mkString(" ")
+            val expr2seq = expr2.content.mkString(" ")
+            expr1seq <= expr2seq // sorting by surface text form ASC
+          }
+        }
+    })
+
+    buffer.append(CSVUtils.mkCSV(List("Freq.", "Size", "Surface Form",
+      "Spanning", "First Speaker", "Turns")))
+    buffer.append("\n")
+    for (expr <- sortedExpressions) {
+      buffer.append(CSVUtils.mkCSV(List(expr.freq, expr.content.size, expr.content.mkString(" "),
+        expr.span(), expr.firstSpeakerRepr(), expr.turns().mkString(", "))))
       buffer.append("\n")
     }
 
@@ -368,7 +510,7 @@ object DialogueLexicon {
 
     val buffer = new StringBuilder
     for ((turn, index) <- turns.zipWithIndex) {
-      buffer.append(s"${turn.speaker}|$index: ")
+      buffer.append(s"${turn.speaker}|$index| ${turn.rawSpeaker}: ")
 
       // Recovering the ranges of token positions involved in an expression
       val flatRanges =

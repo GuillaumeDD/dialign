@@ -2,7 +2,7 @@
  * Copyright ISIR, CNRS
  *
  * Contributor(s) :
- *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017)
+ *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017, 2020, 2021)
  *
  * This software is a computer program whose purpose is to implement
  * automatic and generic measures of verbal alignment in dyadic dialogue
@@ -36,9 +36,34 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign
+package dialign.metrics.online
 
-object Speaker extends Enumeration {
-  type Speaker = Value
-  val A, B = Value
+import dialign.DialogueLexicon
+
+case class SelfRepetitionMeasures(lexicon: DialogueLexicon) {
+  private val lastTurnID = lexicon.turns.size - 1
+  private val lastTurn = lexicon.turns(lastTurnID)
+
+  import lexicon._
+
+  /**
+    * The self-expression repetition measure of the last turn of the dialogue, i.e.
+    * a measure of the self-repetition lexicon usage
+    *
+    */
+  val selfExpressionRepetition =
+    if (lexicon.turns(lastTurnID).tokenSize > 0) {
+      lastTurn.rawExprsTokenSize.toDouble / lexicon.turns(lastTurnID).tokenSize.toDouble
+    } else {
+      0.0d
+    }
+
+  /**
+    * Dialogue structures considered in the computation of the activation
+    */
+  val dialogueStructures = lastTurn.allExpressions.filter(_.turns().size > 0)
+  /**
+    * Number of considered dialogue structures
+    */
+  val N = dialogueStructures.size
 }

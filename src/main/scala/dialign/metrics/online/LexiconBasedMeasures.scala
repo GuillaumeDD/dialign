@@ -36,9 +36,35 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign
+package dialign.metrics.online
 
-object Speaker extends Enumeration {
-  type Speaker = Value
-  val A, B = Value
+import dialign.DialogueLexicon
+
+case class LexiconBasedMeasures(lexicon: DialogueLexicon) {
+
+  import lexicon._
+
+  private val lastTurnID = turns.size - 1
+  private val lastTurn = turns(lastTurnID)
+  val sharedExpressions =  lastTurn.allExpressions.filter(_.turns().size > 0)
+  val establishedSharedExpressions = expressions.filter(_.establishementTurnID() == lastTurnID)
+
+  /**
+    * The expression expression measure of the last turn of the dialogue, i.e.
+    * a measure of the lexicon usage
+    *
+    */
+  val expressionRepetition =
+    if (lexicon.turns(lastTurnID).tokenSize > 0) {
+      lexicon.turns(lastTurnID).exprsTokenSize.toDouble / lexicon.turns(lastTurnID).tokenSize.toDouble
+    } else {
+      0.0d
+    }
+
+  /**
+    * A measure of the contribution to the lexicon of the last turn of the dialogue, i.e.
+    * the number of established expression in the last turn
+    *
+    */
+  val lexiconContribution = expressions.count(_.establishementTurnID() == lastTurnID)
 }

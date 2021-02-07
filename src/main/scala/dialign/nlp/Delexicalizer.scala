@@ -36,9 +36,26 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign
+package dialign.nlp
 
-object Speaker extends Enumeration {
-  type Speaker = Value
-  val A, B = Value
+/**
+  * A rule-based domain-specific delexicaliser for the negotiation corpora
+  */
+object Delexicalizer {
+
+  def identity(s: String): String = s
+
+  def delexicalize(s: String): String =
+    regexes.foldLeft(s)((currentStr, regex) => currentStr.replaceAll(regex, "ITEM"))
+
+  // TODO remove the hard-coded part
+  val objects = List("chair", "clock", "lamp", "painting", "plate", "record", "album", "locker", "picture", "crate")
+  val regexes = for (item <- objects)
+    yield s"${item}s?"
+
+  implicit class Delexicalizable(s: String) {
+    def delexicalize: String =
+      Delexicalizer.delexicalize(s)
+  }
+
 }

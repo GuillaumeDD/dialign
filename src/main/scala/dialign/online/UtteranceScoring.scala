@@ -2,7 +2,7 @@
  * Copyright ISIR, CNRS
  *
  * Contributor(s) :
- *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017)
+ *    Guillaume Dubuisson Duplessis <guillaume@dubuissonduplessis.fr> (2017, 2020, 2021)
  *
  * This software is a computer program whose purpose is to implement
  * automatic and generic measures of verbal alignment in dyadic dialogue
@@ -36,9 +36,23 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  *
  */
-package dialign
+package dialign.online
 
-object Speaker extends Enumeration {
-  type Speaker = Value
-  val A, B = Value
-}
+import dialign.Expression
+
+/**
+  * Scoring results for a specific utterance
+  *
+  * @param utterance                    the scored utterance
+  * @param der                          dynamic shared expression repetition
+  * @param dser                         dynamic self-expression repetitions
+  * @param sharedExpressions            the shared expressions present in the utterance
+  * @param establishedSharedExpressions the established shared expressions by this utterance
+  * @param selfExpressions              the self-expressions present in the utterance
+  */
+case class UtteranceScoring(utterance: Utterance,
+                            der: Double,
+                            dser: Double,
+                            sharedExpressions: Set[Expression],
+                            establishedSharedExpressions: Set[Expression],
+                            selfExpressions: Set[Expression])
