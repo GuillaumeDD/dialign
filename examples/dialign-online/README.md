@@ -1,9 +1,9 @@
 # Tutorial to try `dialign-online` for Interactive Purposes
 
 In this tutorial, you will:
-- learn [how to run `dialign-online` in interactive mode and export the created dialogue transcript](#running-dialign-online-in-interactive-mode) ; and
+- learn [how to run `dialign-online` in interactive mode and export the transcript of the created dialogue](#running-dialign-online-in-interactive-mode) ; and
 - learn [how to run `dialign-online` on a single dialogue transcript](#running-dialign-online-on-a-dialogue-transcript) 
-  in order to compute online metrics for each turn.
+  in order to directly compute online metrics for each turn.
   
 ## Running `dialign-online` in Interactive Mode
 `dialign-online` can be ran in interactive mode to simulate an ongoing chat dialogue.
@@ -27,7 +27,7 @@ Human:	what makes eh Alice smaller ?
 
 The dialogue format used by `dialign-online` is the same
 [`tsv` format (tab-separated values)](https://en.wikipedia.org/wiki/Tab-separated_values)
-as the [one used for corpus studies](../dialign-online/README.md#input-format).
+as the [one used for corpus studies](../dialign-offline/README.md#input-format).
 
 ### Running an Interactive Session
 To start an interactive session, just run `dialign-online` with or without a dialogue
@@ -61,7 +61,7 @@ This returns the following result:
 Scoring the utterance returns multiple information:
 - information related to verbal alignement:
    + DER (Dynamic Expression Repetition) which scores between 0.0 (not all) and 
-     1.0 (completely)how much the utterance reuses shared lexical patterns
+     1.0 (completely) how much the utterance reuses shared lexical patterns
    + Reused shared lexical patterns: the list of shared lexical patterns that
      are reused in this utterance
    + Established shared lexical patterns: the list of shared lexical patterns that
@@ -93,7 +93,7 @@ Then, let's score the following agent response:
 
 ![Screenshot of `dialign-online` after directly adding an utterance](screenshots/07-1.png)
 
-This give the following scoring results:
+This gives the following scoring results:
 
 ![Screenshot of `dialign-online` after directly adding an utterance](screenshots/07-2.png)
 
