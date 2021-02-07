@@ -11,7 +11,7 @@ In this tutorial, you will:
 
 ## Input Data: Dialogue Transcripts
 
-In this tutorial, the input corpus is located in the [corpus/ directory](dialign-offline/corpus/). It contains
+In this tutorial, the input corpus is located in the [corpus/ directory](corpus/). It contains
 a single transcript "[excerpt-alice.tsv](corpus/excerpt-alice.tsv)" which content is reproduced
 below:
 ```tsv
