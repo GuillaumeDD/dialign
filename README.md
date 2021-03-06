@@ -8,10 +8,7 @@ pattern mining at the level of surface of text utterances.
 
 A good place to start can be found in the following paper 
 (more information can be found in the ["Citing `dialign`" section](#citing-dialign)):
-- Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
-                                                                           Interactions based on Measures of Lexical
-                                                                           Repetitions**, Language Resources and Evaluation, 
-                                                                           2021, 35p. \[*to appear*\]
+- Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards alignment strategies in human-agent interactions based on measures of lexical repetitions**, Lang Resources & Evaluation, 2021, 36p. \[[HAL](https://hal.archives-ouvertes.fr/hal-03147824) \| [DOI](https://dx.doi.org/10.1007/s10579-021-09532-w) \]
 
 
 
@@ -234,10 +231,7 @@ A screenshot of this demonstration can be found below:
 
 If you want to refer to the framework or to the `dialign` software, please cite 
 the following paper:
-- Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards Alignment Strategies in Human-Agent
-                                                                     Interactions based on Measures of Lexical
-                                                                     Repetitions**, Language Resources and Evaluation, 
-                                                                     2021, 35p. \[*to appear*\]
+- Dubuisson Duplessis, G.; Langlet, C.; Clavel, C.; Landragin, F., **Towards alignment strategies in human-agent interactions based on measures of lexical repetitions**, Lang Resources & Evaluation, 2021, 36p. \[[HAL](https://hal.archives-ouvertes.fr/hal-03147824) \| [DOI](https://dx.doi.org/10.1007/s10579-021-09532-w) \]
 
 If you want to refer to the study strictly limited to verbal alignment on a Human-Agent 
 negotiation task, please cite this paper :
