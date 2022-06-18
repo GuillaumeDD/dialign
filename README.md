@@ -1,6 +1,8 @@
 # dialign #
 
-Latest version: [1.0](CHANGELOG.md#10---2021-02-07)
+Latest version: [1.1](CHANGELOG.md#11---2022-06-18)
+
+Previous versions: [1.0](CHANGELOG.md#10---2021-02-07) 
 
 `dialign` is  a software that  provides automatic and generic  measures of
 verbal alignment and self-repetitions in  dyadic dialogue based on  sequential 
@@ -225,7 +227,7 @@ A screenshot of this demonstration can be found below:
 
 ## Contributors ##
 
-- Guillaume Dubuisson Duplessis (2017, 2020, 2021)
+- Guillaume Dubuisson Duplessis (2017, 2020, 2021, 2022)
 
 ## Citing `dialign` ##
 
