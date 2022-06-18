@@ -5,7 +5,7 @@
 This is a technical maintenance release of the `dialign` software.
 
 Changes:
-- Making `dialign` compatible with Windows (#2)
+- Making `dialign` compatible with Windows (GuillaumeDD/dialign#2)
 - Upgrade of the main dependencies
 
 ## [1.0] - 2021-02-07
