@@ -1,16 +1,16 @@
 val scalatest = "org.scalatest" %% "scalatest" % "3.1.1" % "test"
-val logging_library = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
-val slf4j = "org.slf4j" % "slf4j-api" % "1.7.21"
-val logback_core = "ch.qos.logback" % "logback-core" % "1.1.7"
-val logback_classic = "ch.qos.logback" % "logback-classic" % "1.1.7"
+val logging_library = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+val slf4j = "org.slf4j" % "slf4j-api" % "1.7.36"
+val logback_core = "ch.qos.logback" % "logback-core" % "1.2.10"
+val logback_classic = "ch.qos.logback" % "logback-classic" % "1.2.10"
 val junit = "junit" % "junit" % "4.12" % "test"
 val scopt = "com.github.scopt" %% "scopt" % "3.7.1"
 val gstlib = "com.github.guillaumedd" %% "gstlib" % "0.1.3"
 
 lazy val commonSettings = Seq(
   organization := "com.github.guillaumedd",
-  version := "1.0",
-  scalaVersion := "2.13.4"
+  version := "1.1",
+  scalaVersion := "2.13.8"
 )
 
 lazy val root = (project in file(".")).
