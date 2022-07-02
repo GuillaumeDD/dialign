@@ -131,6 +131,14 @@ object DialogueReader {
       speaker2string(speaker)
   }
 
+  /**
+    * Extract the name of the file and normalize it
+    * @param file file object pointing to the file
+    * @return a normalized version of the filename without dots
+    */
+  def buildNameFromFile(file: File): String = {
+    file.getName.replaceAll("\\.", "_")
+  }
 
   /**
     * Loads a text file containing a dialogue
@@ -179,8 +187,7 @@ object DialogueReader {
     }
 
     // Building a valid name
-    val filename = file.getAbsolutePath
-    val name = filename.split("/").last.replaceAll("\\.", "_")
+    val name = DialogueReader.buildNameFromFile(file)
 
     Dialogue(name, utterances, line2speaker)
   }

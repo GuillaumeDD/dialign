@@ -55,7 +55,7 @@ object DialignOnlineApp extends LazyLogging {
                     verbose: Boolean = false)
 
   val parser = new scopt.OptionParser[Config]("dialign-online") {
-    head("dialign-online", "1.0")
+    head("dialign-online", "1.1")
     note("This software is governed by the CeCILL-B license under French law and\n" +
       "abiding by the rules of distribution of free software.  You can use, \n" +
       "modify and/or redistribute the software under the terms of the CeCILL-B\n" +

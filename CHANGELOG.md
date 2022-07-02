@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [1.1] - 2022-06-18
+
+This is a technical maintenance release of the `dialign` software.
+
+Changes:
+- Making `dialign` compatible with Windows (GuillaumeDD/dialign#2)
+- Upgrade of the main dependencies
+
 ## [1.0] - 2021-02-07
 
 This is a major update of the `dialign` software due to the update of the framework
