@@ -1,6 +1,6 @@
 # dialign #
 
-Latest version: [1.1](CHANGELOG.md#11---2022-06-18)
+Latest version: [1.1](CHANGELOG.md#11---2022-06-18) \[[download link](https://github.com/GuillaumeDD/dialign/releases/download/v1.1/dialign-1.1.zip)\]
 
 Previous versions: [1.0](CHANGELOG.md#10---2021-02-07) 
 
