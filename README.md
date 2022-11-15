@@ -194,6 +194,9 @@ follows:
 ```bash
 java -jar dialign.jar -i input-directory/ -o output-directory/
 ```
+(here we assume that the dialogue files are encoded in UTF-8, if not it
+is possible to specify a different encoding by adding `-Dfile.encoding=ISO-8859-1`
+where `ISO-8859-1` is the desired encoding)
 
 `dialign`  allows to  filter input  dialogue files  by prefix,  suffix and
 extension. For  instance, if the  only input dialogue files  to consider

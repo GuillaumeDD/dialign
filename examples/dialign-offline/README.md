@@ -39,6 +39,13 @@ where:
 - `LOCUTOR`: the unique identifier of the locutor
 - `TOKENIZED UTTERANCE`: the (already) tokenized and normalized utterance 
 
+By default, note that `dialign` supports the UTF-8 encoding. It is possible to
+specify a different input encoding via the option `-Dfile.encoding=` when 
+running `dialign`. For example:
+```bash
+java -Dfile.encoding=ISO-8859-1 -jar dialign.jar -i corpus/ -o output-dialign/
+``` 
+
 ### Preprocessing of the Transcripts
 Before using `dialign` on your data, make sure that the dialogues are correctly formatted to be 
 processed by `dialign`.
@@ -59,6 +66,9 @@ to output the results in the `output-dialign/` directory. To this end, simply ru
 as follows:
 ```bash
 java -jar dialign.jar -i corpus/ -o output-dialign/
+
+# Or if in a different encoding such as ISO-8859-1
+java -Dfile.encoding=ISO-8859-1 -jar dialign.jar -i corpus/ -o output-dialign/
 ```
 
 Note: to run dialign on a corpus containing multiple dialogue transcripts, you simply need 
