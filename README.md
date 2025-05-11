@@ -1,8 +1,9 @@
 # dialign #
 
-Latest version: [1.1](CHANGELOG.md#11---2022-06-18) \[[download link](https://github.com/GuillaumeDD/dialign/releases/download/v1.1/dialign-1.1.zip)\]
-
-Previous versions: [1.0](CHANGELOG.md#10---2021-02-07) 
+Latest versions:
+- scala : [1.1](CHANGELOG.md#11---2022-06-18) \[[download link](https://github.com/GuillaumeDD/dialign/releases/download/v1.1/dialign-1.1.zip)\]
+   + Previous versions: [1.0](CHANGELOG.md#10---2021-02-07)
+- python : see the [`dialign_python` project](https://github.com/akonoroshi/dialign_python)
 
 `dialign` is  a software that  provides automatic and generic  measures of
 verbal alignment and self-repetitions in  dyadic dialogue based on  sequential 
