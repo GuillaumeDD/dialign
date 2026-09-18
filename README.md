@@ -201,7 +201,7 @@ where `ISO-8859-1` is the desired encoding)
 
 `dialign`  allows to  filter input  dialogue files  by prefix,  suffix and
 extension. For  instance, if the  only input dialogue files  to consider
-are files matching the  following pattern: `dialogue-*-cleaned.dial`, it
+are files matching the  following pattern: `dialogue-*-cleaned.tsv`, it
 is possible use the following options with dialign:
 ```bash
 java -jar dialign.jar -i input-directory/ -o output-directory/ \
